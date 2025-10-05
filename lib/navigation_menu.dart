@@ -1,5 +1,5 @@
-import 'package:dartify/features/whishlist/screens/wishlist.dart';
-import 'package:dartify/utils/helpers/helper_functions.dart';
+import 'package:hotshop/features/whishlist/screens/wishlist.dart';
+import 'package:hotshop/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';

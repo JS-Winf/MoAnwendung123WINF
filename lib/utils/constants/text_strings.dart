@@ -7,7 +7,7 @@ class TTexts {
   static const String skip = "Skip";
   static const String done = "Done";
   static const String submit = "Submit";
-  static const String appName = "Dartify";
+  static const String appName = "Hotshop";
   static const String tContinue = "Continue";
 
   /* Onboarding */

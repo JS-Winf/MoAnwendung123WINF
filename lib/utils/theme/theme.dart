@@ -1,4 +1,4 @@
-import 'package:dartify/utils/constants/colors.dart';
+import 'package:hotshop/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'custom_themes/text_field_theme.dart';
