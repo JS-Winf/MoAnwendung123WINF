@@ -1,13 +1,8 @@
-import 'package:hotshop/features/whishlist/screens/wishlist.dart';
-import 'package:hotshop/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-
-import 'features/account/screens/settings/settings.dart';
 import 'features/home/screens/home.dart';
 import 'features/store/screens/store.dart';
-import 'utils/constants/colors.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -15,7 +10,6 @@ class NavigationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(NavigationController());
-    final dark = THelperFunctions.isDarkMode(context);
 
     return Scaffold(
       bottomNavigationBar: Obx(
@@ -24,8 +18,6 @@ class NavigationMenu extends StatelessWidget {
           elevation: 0,
           selectedIndex: controller.selectedIndex.value,
           onDestinationSelected: (index) => controller.selectedIndex.value = index,
-          backgroundColor: dark ? TColors.black : TColors.white,
-          indicatorColor: dark ? TColors.white.withOpacity(0.1) : TColors.black.withOpacity(0.1),
           destinations: const [
             NavigationDestination(icon: Icon(Iconsax.home), label: 'Home'),
             NavigationDestination(icon: Icon(Iconsax.shop), label: 'Store'),
@@ -39,9 +31,13 @@ class NavigationMenu extends StatelessWidget {
   }
 }
 
-
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
 
-  final screens = [const HomeScreen(), const StoreScreen(), const FavouriteScreen(), const SettingsScreen()];
+  final screens = [
+    const HomeScreen(),
+    const StoreScreen(),
+    const Center(child: Text('Wishlist')),
+    const Center(child: Text('Profile')),
+  ];
 }

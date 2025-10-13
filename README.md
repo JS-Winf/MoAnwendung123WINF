@@ -1,4 +1,4 @@
-# my_app
+# hotshop
 
 A new Flutter project.
 
