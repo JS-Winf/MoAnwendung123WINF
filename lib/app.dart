@@ -14,7 +14,7 @@ class App extends StatelessWidget {
       darkTheme: TAppTheme.darkTheme,
       home: const Scaffold(
         body: Center(
-          child: Text('Dartify - Coming Soon'),
+          child: Text('Hotshop - Coming Soon'),
         ),
       ),
     );

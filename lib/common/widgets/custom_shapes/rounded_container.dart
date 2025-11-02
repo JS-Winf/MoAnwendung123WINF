@@ -1,5 +1,5 @@
-import 'package:dartify/utils/constants/colors.dart';
-import 'package:dartify/utils/constants/sizes.dart';
+import 'package:hotshop/utils/constants/colors.dart';
+import 'package:hotshop/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 
 class TRoundedContainer extends StatelessWidget {

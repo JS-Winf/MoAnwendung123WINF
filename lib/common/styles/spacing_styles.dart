@@ -1,4 +1,4 @@
-import 'package:dartify/utils/constants/sizes.dart';
+import 'package:hotshop/utils/constants/sizes.dart';
 import 'package:flutter/cupertino.dart';
 
 class TSpacingStyle {

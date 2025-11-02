@@ -1,4 +1,4 @@
-# dartify
+# hotshop
 
 A new Flutter project.
 

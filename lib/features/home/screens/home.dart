@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
                               Text('Good day for shopping', 
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70)
                               ),
-                              Text('Dartify Store', 
+                              Text('Hotshop Store', 
                                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)
                               ),
                             ],
