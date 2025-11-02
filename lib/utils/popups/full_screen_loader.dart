@@ -1,5 +1,5 @@
-import 'package:hotshop/utils/constants/colors.dart';
-import 'package:hotshop/utils/helpers/helper_functions.dart';
+import 'package:dartify/utils/constants/colors.dart';
+import 'package:dartify/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

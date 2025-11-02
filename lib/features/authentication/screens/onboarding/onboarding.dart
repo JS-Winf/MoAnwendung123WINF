@@ -12,7 +12,7 @@ class OnBoardingScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Welcome to Hotshop', style: TextStyle(fontSize: 24)),
+            const Text('Welcome to Dartify', style: TextStyle(fontSize: 24)),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Get.to(() => const LoginScreen()),

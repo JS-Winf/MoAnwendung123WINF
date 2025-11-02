@@ -1,4 +1,4 @@
-import 'package:hotshop/common/styles/spacing_styles.dart';
+import 'package:dartify/common/styles/spacing_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 

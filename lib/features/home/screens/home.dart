@@ -10,7 +10,7 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header Container with gradient
+            // Primary Header Container
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
                               Text('Good day for shopping', 
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70)
                               ),
-                              Text('Hotshop Store', 
+                              Text('Dartify Store', 
                                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)
                               ),
                             ],
@@ -104,7 +104,7 @@ class HomeScreen extends StatelessWidget {
                                       child: Text('F${index + 1}', style: const TextStyle(color: Colors.blue)),
                                     ),
                                     const SizedBox(height: 4),
-                                    Text('Friend', style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                                    const Text('Friend', style: TextStyle(color: Colors.white70, fontSize: 10)),
                                   ],
                                 ),
                               ),
@@ -129,20 +129,42 @@ class HomeScreen extends StatelessWidget {
                     height: 180,
                     child: PageView.builder(
                       itemCount: 3,
-                      itemBuilder: (context, index) => Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.orange.shade300, Colors.orange.shade600],
+                      itemBuilder: (context, index) {
+                        final banners = [
+                          'assets/images/products/promo-banner-1.png',
+                          'assets/images/products/promo-banner-2.png',
+                          'assets/images/products/promo-banner-3.png',
+                        ];
+                        
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text('Promo Banner ${index + 1}', 
-                            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              banners[index],
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Colors.orange.shade300, Colors.orange.shade600],
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Text('Promo Banner ${index + 1}', 
+                                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -167,70 +189,89 @@ class HomeScreen extends StatelessWidget {
                       childAspectRatio: 0.8,
                     ),
                     itemCount: 4,
-                    itemBuilder: (context, index) => Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade200,
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                              ),
-                              child: Center(
-                                child: Icon(Iconsax.shopping_bag, size: 40, color: Colors.grey.shade400),
+                    itemBuilder: (context, index) {
+                      final products = [
+                        {'name': 'Nike Air Max', 'brand': 'Nike', 'price': '129.99', 'image': 'assets/images/products/NikeAirMax.png'},
+                        {'name': 'iPhone 14 Pro', 'brand': 'Apple', 'price': '999.99', 'image': 'assets/images/products/iphone_14_pro.png'},
+                        {'name': 'Leather Jacket', 'brand': 'Fashion', 'price': '89.99', 'image': 'assets/images/products/leather_jacket_1.png'},
+                        {'name': 'Office Chair', 'brand': 'Furniture', 'price': '199.99', 'image': 'assets/images/products/office_chair_1.png'},
+                      ];
+                      final product = products[index];
+                      
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade200,
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                  child: Image.asset(
+                                    product['image']!,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => Center(
+                                      child: Icon(Iconsax.shopping_bag, size: 40, color: Colors.grey.shade400),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Product ${index + 1}', 
-                                    style: const TextStyle(fontWeight: FontWeight.bold)
-                                  ),
-                                  Text('Brand Name', 
-                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12)
-                                  ),
-                                  const Spacer(),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('\$${(index + 1) * 25}.99', 
-                                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.all(4),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.blue,
-                                          shape: BoxShape.circle,
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(product['name']!, 
+                                      style: const TextStyle(fontWeight: FontWeight.bold)
+                                    ),
+                                    Text(product['brand']!, 
+                                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12)
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('\$${product['price']}', 
+                                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)
                                         ),
-                                        child: const Icon(Icons.add, color: Colors.white, size: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.blue,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(Icons.add, color: Colors.white, size: 16),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

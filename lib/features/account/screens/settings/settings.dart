@@ -1,190 +1,108 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../../utils/theme/theme_controller.dart';
+import 'package:iconsax/iconsax.dart';
+import '../../../../data/repositories/authentication/authentication_repository.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Get.find<ThemeController>();
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: Obx(() {
-        final mode = theme.themeMode.value;
-
-        return ListView(
-          padding: const EdgeInsets.all(16),
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            // ===================== ACCOUNT =====================
-            const _SectionHeader('Account'),
-            ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text('Profile'),
-              subtitle: const Text('Name, E-Mail, Passwort'),
-              onTap: () {
-                // TODO: Profil-Screen öffnen
-                // Get.to(() => const ProfileScreen());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.location_on_outlined),
-              title: const Text('Address Book'),
-              subtitle: const Text('Liefer- & Rechnungsadressen'),
-              onTap: () {
-                // TODO: AddressBook öffnen
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.payment_outlined),
-              title: const Text('Payment Methods'),
-              subtitle: const Text('Karten, PayPal, …'),
-              onTap: () {
-                // TODO: Zahlungsarten öffnen
-              },
-            ),
-            const Divider(height: 32),
-
-            // ===================== PREFERENCES (inkl. NEU: Theme) =====================
-            const _SectionHeader('Preferences'),
-            // Theme Mode (NEU)
-            ListTile(
-              leading: const Icon(Icons.brightness_6_outlined),
-              title: const Text('Theme'),
-              subtitle: Text(
-                switch (mode) {
-                  ThemeMode.light => 'Light',
-                  ThemeMode.dark => 'Dark',
-                  ThemeMode.system => 'System',
-                },
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue, Colors.blueAccent],
+                ),
               ),
-              trailing: SegmentedButton<ThemeMode>(
-                segments: const [
-                  ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-                  ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
-                  ButtonSegment(value: ThemeMode.system, label: Text('System')),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    Text('Account', 
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white)
+                    ),
+                    const SizedBox(height: 20),
+                    // User Profile
+                    ListTile(
+                      leading: const CircleAvatar(
+                        backgroundImage: AssetImage('assets/images/content/user.png'),
+                      ),
+                      title: const Text('John Doe', style: TextStyle(color: Colors.white)),
+                      subtitle: const Text('john.doe@email.com', style: TextStyle(color: Colors.white70)),
+                      trailing: IconButton(
+                        icon: const Icon(Iconsax.edit, color: Colors.white),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Menu Items
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Account Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  
+                  _buildMenuItem(Iconsax.safe_home, 'My Addresses', 'Set shopping delivery address'),
+                  _buildMenuItem(Iconsax.shopping_cart, 'My Cart', 'Add, remove products and move to checkout'),
+                  _buildMenuItem(Iconsax.bag_tick, 'My Orders', 'In-progress and Completed Orders'),
+                  _buildMenuItem(Iconsax.bank, 'Bank Account', 'Withdraw balance to registered bank account'),
+                  _buildMenuItem(Iconsax.discount_shape, 'My Coupons', 'List of all the discounted coupons'),
+                  _buildMenuItem(Iconsax.notification, 'Notifications', 'Set any kind of notifications message'),
+                  
+                  const SizedBox(height: 32),
+                  const Text('App Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  
+                  _buildMenuItem(Iconsax.document_upload, 'Load Data', 'Upload Data to your Cloud firebase'),
+                  _buildSwitchMenuItem(Iconsax.location, 'Geolocation', 'Set recommendation based on location', true),
+                  _buildSwitchMenuItem(Iconsax.security_user, 'Safe Mode', 'Search result is safe for all ages', false),
+                  _buildSwitchMenuItem(Iconsax.image, 'HD Image Quality', 'Set image quality to be seen', false),
+
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        await AuthenticationRepository.instance.logout();
+                      },
+                      child: const Text('Logout'),
+                    ),
+                  ),
                 ],
-                selected: {mode},
-                onSelectionChanged: (s) => theme.setMode(s.single),
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.brightness_auto),
-              title: const Text('Quick Toggle'),
-              subtitle: const Text('Light → Dark → System'),
-              trailing: IconButton(
-                icon: const Icon(Icons.brightness_6),
-                onPressed: theme.toggle,
-                tooltip: 'Switch Theme',
-              ),
-            ),
-            // HIER kannst du weitere alte Preferences belassen/ergänzen …
-
-            const Divider(height: 32),
-
-            // ===================== NOTIFICATIONS =====================
-            const _SectionHeader('Notifications'),
-            SwitchListTile(
-              secondary: const Icon(Icons.notifications_active_outlined),
-              title: const Text('Push Notifications'),
-              value: true, // TODO: Setting anbinden
-              onChanged: (v) {
-                // TODO: speichern
-                Get.snackbar('Saved', 'Push: ${v ? "on" : "off"}');
-              },
-            ),
-            SwitchListTile(
-              secondary: const Icon(Icons.email_outlined),
-              title: const Text('Email Updates'),
-              value: false, // TODO: Setting anbinden
-              onChanged: (v) {
-                // TODO: speichern
-                Get.snackbar('Saved', 'Email: ${v ? "on" : "off"}');
-              },
-            ),
-            const Divider(height: 32),
-
-            // ===================== PRIVACY =====================
-            const _SectionHeader('Privacy'),
-            ListTile(
-              leading: const Icon(Icons.lock_outline),
-              title: const Text('Privacy Settings'),
-              subtitle: const Text('Tracking, Personalisierung'),
-              onTap: () {
-                // TODO: Privacy Screen
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.security_outlined),
-              title: const Text('Security'),
-              subtitle: const Text('Zwei-Faktor, Geräte'),
-              onTap: () {
-                // TODO: Security Screen
-              },
-            ),
-            const Divider(height: 32),
-
-            // ===================== ABOUT =====================
-            const _SectionHeader('About'),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('App Info'),
-              subtitle: const Text('Version, Lizenzen'),
-              onTap: () => showAboutDialog(
-                context: context,
-                applicationName: 'Hotshop',
-                applicationVersion: '0.1.0',
-                children: const [Text('Thanks for trying Hotshop!')],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.description_outlined),
-              title: const Text('Licenses'),
-              onTap: () => showLicensePage(
-                context: context,
-                applicationName: 'Hotshop',
-                applicationVersion: '0.1.0',
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // ===================== SESSION =====================
-            const _SectionHeader('Session'),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {
-                // TODO: Session clear + Redirect
-                // Get.offAll(() => const OnBoardingScreen());
-                Get.snackbar('Logout', 'Du wurdest abgemeldet (Demo)');
-              },
-            ),
+            )
           ],
-        );
-      }),
+        )
+      )
     );
   }
-}
 
-class _SectionHeader extends StatelessWidget {
-  final String text;
-  const _SectionHeader(this.text);
+  Widget _buildMenuItem(IconData icon, String title, String subtitle) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: () {},
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    final onBg = Theme.of(context).colorScheme.onBackground;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              // Nutze withOpacity für maximale Kompatibilität
-              color: onBg.withOpacity(0.8),
-            ),
-      ),
+  Widget _buildSwitchMenuItem(IconData icon, String title, String subtitle, bool value) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: Switch(value: value, onChanged: (newValue) {}),
     );
   }
 }

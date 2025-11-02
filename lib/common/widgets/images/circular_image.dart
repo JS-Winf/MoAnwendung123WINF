@@ -1,4 +1,4 @@
-import 'package:hotshop/utils/constants/sizes.dart';
+import 'package:dartify/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants/colors.dart';

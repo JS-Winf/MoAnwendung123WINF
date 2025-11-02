@@ -1,6 +1,6 @@
-import 'package:hotshop/common/widgets/texts/brand_title_text.dart';
-import 'package:hotshop/utils/constants/colors.dart';
-import 'package:hotshop/utils/constants/sizes.dart';
+import 'package:dartify/common/widgets/texts/brand_title_text.dart';
+import 'package:dartify/utils/constants/colors.dart';
+import 'package:dartify/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
