@@ -1,6 +1,6 @@
-# hotshop
+# HotShop
 
-A new Flutter project.
+A hot shopping Flutter app.
 
 ## Getting Started
 

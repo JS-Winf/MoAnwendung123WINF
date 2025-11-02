@@ -14,7 +14,7 @@ class TCheckboxTheme {
     }),
     fillColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return Colors.blue;
+        return const Color(0xFF764ba2);
       } else {
         return Colors.transparent;
       }
@@ -32,7 +32,7 @@ class TCheckboxTheme {
     }),
     fillColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return Colors.blue;
+        return const Color(0xFF764ba2);
       } else {
         return Colors.transparent;
       }

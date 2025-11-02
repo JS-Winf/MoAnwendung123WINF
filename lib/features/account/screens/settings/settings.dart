@@ -1,83 +1,118 @@
+import 'package:hotshop/common/widgets/images/circular_image.dart';
+import 'package:hotshop/common/widgets/list_tiles/settings_menu_tile.dart';
+import 'package:hotshop/common/widgets/texts/section_heading.dart';
+import 'package:hotshop/data/repositories/authentication/authentication_repository.dart';
+import 'package:hotshop/features/account/screens/profile/profile.dart';
+import 'package:hotshop/utils/constants/image_strings.dart';
+import 'package:hotshop/utils/constants/app_strings.dart';
+import 'package:hotshop/utils/constants/language_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import '../../../../data/repositories/authentication/authentication_repository.dart';
+
+import '../../../../common/widgets/appbar/app_bar.dart';
+import '../../../../common/widgets/custom_shapes/containers/primary_header_container.dart';
+import '../../../../common/widgets/list_tiles/user_profile_tile.dart';
+import '../../../../utils/constants/colors.dart';
+import '../../../../utils/constants/sizes.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final languageController = Get.put(LanguageController());
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue, Colors.blueAccent],
+            /* Header */
+            TPrimaryHeaderContainer(child: Column(
+              children: [
+                GetBuilder<LanguageController>(
+                  builder: (_) => TAppBar(title: Text(AppStrings.account, style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.white))),
                 ),
-              ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    Text('Account', 
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white)
-                    ),
-                    const SizedBox(height: 20),
-                    // User Profile
-                    ListTile(
-                      leading: const CircleAvatar(
-                        backgroundImage: AssetImage('assets/images/content/user.png'),
-                      ),
-                      title: const Text('John Doe', style: TextStyle(color: Colors.white)),
-                      subtitle: const Text('john.doe@email.com', style: TextStyle(color: Colors.white70)),
-                      trailing: IconButton(
-                        icon: const Icon(Iconsax.edit, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
 
-            // Menu Items
+                /* User Profile Card */
+                TUserProfileTile(onPressed: () => Get.to(() => const ProfileScreen()),),
+                const SizedBox(height: TSizes.spaceBtwSections),
+              ],
+            )),
+
+            /* Menu */
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(TSizes.defaultSpace),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Account Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
+                  /* Account settings */
+                  GetBuilder<LanguageController>(
+                    builder: (_) => TSectionHeading(title: AppStrings.accountSettings, showActionButton: false),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwItems),
                   
-                  _buildMenuItem(Iconsax.safe_home, 'My Addresses', 'Set shopping delivery address'),
-                  _buildMenuItem(Iconsax.shopping_cart, 'My Cart', 'Add, remove products and move to checkout'),
-                  _buildMenuItem(Iconsax.bag_tick, 'My Orders', 'In-progress and Completed Orders'),
-                  _buildMenuItem(Iconsax.bank, 'Bank Account', 'Withdraw balance to registered bank account'),
-                  _buildMenuItem(Iconsax.discount_shape, 'My Coupons', 'List of all the discounted coupons'),
-                  _buildMenuItem(Iconsax.notification, 'Notifications', 'Set any kind of notifications message'),
-                  
-                  const SizedBox(height: 32),
-                  const Text('App Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  
-                  _buildMenuItem(Iconsax.document_upload, 'Load Data', 'Upload Data to your Cloud firebase'),
-                  _buildSwitchMenuItem(Iconsax.location, 'Geolocation', 'Set recommendation based on location', true),
-                  _buildSwitchMenuItem(Iconsax.security_user, 'Safe Mode', 'Search result is safe for all ages', false),
-                  _buildSwitchMenuItem(Iconsax.image, 'HD Image Quality', 'Set image quality to be seen', false),
-
-                  const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () async {
-                        await AuthenticationRepository.instance.logout();
-                      },
-                      child: const Text('Logout'),
+                  GetBuilder<LanguageController>(
+                    builder: (_) => Column(
+                      children: [
+                        TSettingsMenuTile(icon: Iconsax.safe_home, title: AppStrings.myAddresses, subtitle: AppStrings.setShoppingDeliveryAddress),
+                        TSettingsMenuTile(icon: Iconsax.shopping_cart, title: AppStrings.myCart, subtitle: AppStrings.addRemoveProductsCheckout),
+                        TSettingsMenuTile(icon: Iconsax.bag_tick, title: AppStrings.myOrders, subtitle: AppStrings.inProgressCompletedOrders),
+                        TSettingsMenuTile(icon: Iconsax.bank, title: AppStrings.bankAccount, subtitle: AppStrings.withdrawBalanceBank),
+                        TSettingsMenuTile(icon: Iconsax.discount_shape, title: AppStrings.myCoupons, subtitle: AppStrings.listDiscountedCoupons),
+                        TSettingsMenuTile(icon: Iconsax.notification, title: AppStrings.notifications, subtitle: AppStrings.setNotificationMessages),
+                        TSettingsMenuTile(icon: Iconsax.security_card, title: AppStrings.accountPrivacy, subtitle: AppStrings.manageDataUsageAccounts),
+                      ],
                     ),
                   ),
+
+                  const SizedBox(height: TSizes.spaceBtwSections),
+                  GetBuilder<LanguageController>(
+                    builder: (_) => TSectionHeading(title: AppStrings.appSettings, showActionButton: false),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwItems),
+                  GetBuilder<LanguageController>(
+                    builder: (_) => Column(
+                      children: [
+                        TSettingsMenuTile(icon: Iconsax.document_upload, title: AppStrings.loadData, subtitle: AppStrings.uploadDataCloudFirebase),
+                        TSettingsMenuTile(icon: Iconsax.location, title: AppStrings.geolocation, subtitle: AppStrings.setRecommendationLocation, trailing: Switch(value: true, onChanged: (value) {})),
+                        TSettingsMenuTile(icon: Iconsax.security_user, title: AppStrings.safeMode, subtitle: AppStrings.searchResultsSafeAllAges, trailing: Switch(value: false, onChanged: (value) {})),
+                        TSettingsMenuTile(icon: Iconsax.image, title: AppStrings.hdImageQuality, subtitle: AppStrings.setImageQualitySeen, trailing: Switch(value: false, onChanged: (value) {})),
+                        TSettingsMenuTile(
+                          icon: Icons.dark_mode, 
+                          title: AppStrings.darkMode, 
+                          subtitle: AppStrings.switchLightDarkTheme, 
+                          trailing: Switch(
+                            value: Get.isDarkMode, 
+                            onChanged: (value) {
+                              Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+                            }
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+                  GetBuilder<LanguageController>(
+                    builder: (controller) => TSettingsMenuTile(
+                      icon: Icons.language, 
+                      title: 'Deutsch', 
+                      subtitle: AppStrings.useGermanLanguage, 
+                      trailing: Switch(
+                        value: controller.isGerman.value, 
+                        onChanged: (value) {
+                          controller.toggleLanguage(value);
+                          Get.snackbar('Sprache', value ? 'Deutsch aktiviert' : 'English activated');
+                        }
+                      )
+                    ),
+                  ),
+
+                  const SizedBox(height: TSizes.spaceBtwSections),
+                  SizedBox(
+                    width: double.infinity,
+                    child: GetBuilder<LanguageController>(
+                      builder: (_) => OutlinedButton(onPressed: () async => await AuthenticationRepository.instance.logout(), child: Text(AppStrings.logout)),
+                    ),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwSections * 2.5),
                 ],
               ),
             )
@@ -86,23 +121,6 @@ class SettingsScreen extends StatelessWidget {
       )
     );
   }
-
-  Widget _buildMenuItem(IconData icon, String title, String subtitle) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {},
-    );
-  }
-
-  Widget _buildSwitchMenuItem(IconData icon, String title, String subtitle, bool value) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: Switch(value: value, onChanged: (newValue) {}),
-    );
-  }
 }
+
+

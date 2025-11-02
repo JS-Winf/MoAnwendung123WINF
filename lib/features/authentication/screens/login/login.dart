@@ -1,33 +1,45 @@
+import 'package:hotshop/common/styles/spacing_styles.dart';
+import 'package:hotshop/common/widgets/login_signup/form_divider.dart';
+import 'package:hotshop/common/widgets/login_signup/social_buttons.dart';
+import 'package:hotshop/utils/constants/sizes.dart';
+import 'package:hotshop/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../navigation_menu.dart';
+
+import 'widgets/login_form.dart';
+import 'widgets/login_header.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const TextField(decoration: InputDecoration(labelText: 'Email')),
-            const SizedBox(height: 16),
-            const TextField(decoration: InputDecoration(labelText: 'Password')),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Get.snackbar('Success', 'Login successful');
-                // Navigate to main app
-                Get.offAll(() => const NavigationMenu());
-              },
-              child: const Text('Login'),
-            ),
-          ],
-        ),
+        body: SingleChildScrollView(
+            child: Padding(
+      padding: TSpacingStyle.paddingWithAppBarHeight,
+      child: Column(
+        children: [
+          /* Logo, Title & Subtitle */
+          const TLoginHeader(),
+
+          /* Form */
+          const TLoginForm(),
+
+          /* Divider */
+          TFormDivider(dividerText: TTexts.orSignInWith.capitalize!),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          /* Footer */
+          const TSocialButtons()
+        ],
       ),
-    );
+    )));
   }
 }
+
+
+
+
+
