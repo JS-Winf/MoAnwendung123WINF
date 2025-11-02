@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:get/get.dart';
+import '../../../utils/constants/app_strings.dart';
+import '../../../utils/constants/language_controller.dart';
 
 class StoreScreen extends StatelessWidget {
   const StoreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final languageController = Get.put(LanguageController());
     return DefaultTabController(
       length: 5,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Store', style: Theme.of(context).textTheme.headlineMedium),
+          title: GetBuilder<LanguageController>(
+            builder: (_) => Text(AppStrings.store, style: Theme.of(context).textTheme.headlineMedium),
+          ),
           actions: [
             IconButton(onPressed: () {}, icon: const Icon(Iconsax.shopping_bag)),
           ],
@@ -37,11 +43,13 @@ class StoreScreen extends StatelessWidget {
                           border: Border.all(color: Colors.grey),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
                             Icon(Iconsax.search_normal, color: Colors.grey),
                             SizedBox(width: 8),
-                            Text('Search in Store', style: TextStyle(color: Colors.grey)),
+                            GetBuilder<LanguageController>(
+                              builder: (_) => Text(AppStrings.searchInStore, style: TextStyle(color: Colors.grey)),
+                            ),
                           ],
                         ),
                       ),
@@ -51,8 +59,12 @@ class StoreScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Featured Brands', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          TextButton(onPressed: () {}, child: const Text('View All')),
+                          GetBuilder<LanguageController>(
+                            builder: (_) => Text(AppStrings.featuredBrands, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                          GetBuilder<LanguageController>(
+                            builder: (_) => TextButton(onPressed: () {}, child: Text(AppStrings.viewAll)),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -78,10 +90,10 @@ class StoreScreen extends StatelessWidget {
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: Colors.blue.shade100,
+                                  color: const Color(0xFF764ba2).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Icon(Iconsax.shop, color: Colors.blue),
+                                child: const Icon(Iconsax.shop, color: Color(0xFF764ba2)),
                               ),
                               const SizedBox(width: 8),
                               Expanded(
@@ -89,8 +101,12 @@ class StoreScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('Brand ${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                    Text('${(index + 1) * 25} Products', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                    GetBuilder<LanguageController>(
+                                      builder: (_) => Text('${AppStrings.brand} ${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                    GetBuilder<LanguageController>(
+                                      builder: (_) => Text('${(index + 1) * 25} ${AppStrings.products}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -101,27 +117,29 @@ class StoreScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                bottom: const TabBar(
+                bottom: TabBar(
                   isScrollable: true,
                   tabs: [
-                    Tab(child: Text('Sports')),
-                    Tab(child: Text('Furniture')),
-                    Tab(child: Text('Electronics')),
-                    Tab(child: Text('Clothes')),
-                    Tab(child: Text('Cosmetics')),
+                    Tab(child: GetBuilder<LanguageController>(builder: (_) => Text(AppStrings.sports))),
+                    Tab(child: GetBuilder<LanguageController>(builder: (_) => Text(AppStrings.furniture))),
+                    Tab(child: GetBuilder<LanguageController>(builder: (_) => Text(AppStrings.electronics))),
+                    Tab(child: GetBuilder<LanguageController>(builder: (_) => Text(AppStrings.clothes))),
+                    Tab(child: GetBuilder<LanguageController>(builder: (_) => Text(AppStrings.cosmetics))),
                   ],
                 ),
               )
             ];
           },
-          body: TabBarView(
-            children: [
-              _buildCategoryTab('Sports'),
-              _buildCategoryTab('Furniture'),
-              _buildCategoryTab('Electronics'),
-              _buildCategoryTab('Clothes'),
-              _buildCategoryTab('Cosmetics'),
-            ],
+          body: GetBuilder<LanguageController>(
+            builder: (_) => TabBarView(
+              children: [
+                _buildCategoryTab(AppStrings.sports),
+                _buildCategoryTab(AppStrings.furniture),
+                _buildCategoryTab(AppStrings.electronics),
+                _buildCategoryTab(AppStrings.clothes),
+                _buildCategoryTab(AppStrings.cosmetics),
+              ],
+            ),
           ),
         ),
       ),
@@ -134,7 +152,9 @@ class StoreScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$category Products', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          GetBuilder<LanguageController>(
+            builder: (_) => Text('$category ${AppStrings.products}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          ),
           const SizedBox(height: 16),
           Expanded(
             child: GridView.builder(
@@ -142,15 +162,21 @@ class StoreScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
+                childAspectRatio: 0.65,
               ),
               itemCount: 6,
               itemBuilder: (context, index) {
                 final categoryProducts = {
                   'Sports': ['assets/images/products/NikeAirMax.png', 'assets/images/products/Adidas_Football.png', 'assets/images/products/tennis_racket.png'],
+                  'Sport': ['assets/images/products/NikeAirMax.png', 'assets/images/products/Adidas_Football.png', 'assets/images/products/tennis_racket.png'],
                   'Electronics': ['assets/images/products/iphone_14_pro.png', 'assets/images/products/samsung_s9_mobile.png', 'assets/images/products/acer_laptop_1.png'],
+                  'Elektronik': ['assets/images/products/iphone_14_pro.png', 'assets/images/products/samsung_s9_mobile.png', 'assets/images/products/acer_laptop_1.png'],
                   'Clothes': ['assets/images/products/leather_jacket_1.png', 'assets/images/products/tshirt_blue_collar.png', 'assets/images/products/product-jeans.png'],
+                  'Kleidung': ['assets/images/products/leather_jacket_1.png', 'assets/images/products/tshirt_blue_collar.png', 'assets/images/products/product-jeans.png'],
                   'Furniture': ['assets/images/products/office_chair_1.png', 'assets/images/products/bedroom_bed.png', 'assets/images/products/kitchen_counter.png'],
+                  'Möbel': ['assets/images/products/office_chair_1.png', 'assets/images/products/bedroom_bed.png', 'assets/images/products/kitchen_counter.png'],
                   'Cosmetics': [],
+                  'Kosmetik': [],
                 };
                 final images = categoryProducts[category] ?? [];
                 final imagePath = images.isNotEmpty && index < images.length ? images[index] : null;
@@ -179,19 +205,35 @@ class StoreScreen extends StatelessWidget {
                           ),
                           child: ClipRRect(
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                            child: imagePath != null
-                                ? Image.asset(
-                                    imagePath,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) => Center(
-                                      child: Icon(_getCategoryIcon(category), size: 40, color: Colors.blue),
+                            child: Stack(
+                              children: [
+                                imagePath != null
+                                    ? Image.asset(
+                                        imagePath,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) => Center(
+                                          child: Icon(_getCategoryIcon(category), size: 40, color: Color(0xFF764ba2)),
+                                        ),
+                                      )
+                                    : Center(
+                                        child: Icon(_getCategoryIcon(category), size: 40, color: Color(0xFF764ba2)),
+                                      ),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.9),
+                                      shape: BoxShape.circle,
                                     ),
-                                  )
-                                : Center(
-                                    child: Icon(_getCategoryIcon(category), size: 40, color: Colors.blue),
+                                    child: const Icon(Iconsax.heart, color: Colors.grey, size: 16),
                                   ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -205,12 +247,27 @@ class StoreScreen extends StatelessWidget {
                               Text('$category Item ${index + 1}', 
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)
                               ),
-                              Text('Brand Name', 
-                                style: TextStyle(color: Colors.grey.shade600, fontSize: 10)
+                              GetBuilder<LanguageController>(
+                                builder: (_) => Text(AppStrings.brandName, 
+                                  style: TextStyle(color: Colors.grey.shade600, fontSize: 10)
+                                ),
                               ),
                               const Spacer(),
-                              Text('\$${(index + 1) * 25}.99', 
-                                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 12)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('\$${(index + 1) * 25}.99', 
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF764ba2), fontSize: 12)
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF764ba2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.add_shopping_cart, color: Colors.white, size: 12),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -229,11 +286,16 @@ class StoreScreen extends StatelessWidget {
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
-      case 'Sports': return Iconsax.activity;
-      case 'Furniture': return Iconsax.home;
-      case 'Electronics': return Iconsax.mobile;
-      case 'Clothes': return Iconsax.user;
-      case 'Cosmetics': return Iconsax.heart;
+      case 'Sports':
+      case 'Sport': return Iconsax.activity;
+      case 'Furniture':
+      case 'Möbel': return Iconsax.home;
+      case 'Electronics':
+      case 'Elektronik': return Iconsax.mobile;
+      case 'Clothes':
+      case 'Kleidung': return Iconsax.user;
+      case 'Cosmetics':
+      case 'Kosmetik': return Iconsax.heart;
       default: return Iconsax.shop;
     }
   }
