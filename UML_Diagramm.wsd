@@ -1,0 +1,182 @@
+
+@startuml uml
+' ---------- STYLE ----------
+skinparam backgroundColor #ffffff
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam Shadowing true
+skinparam linetype ortho
+left to right direction
+
+' ---------- PACKAGES ----------
+package "domain" {
+  class User <<entity>> {
+    - id : String
+    - name : String
+    - email : String
+    - avatarUrl : String
+    + isComplete() : bool
+  }
+
+  class Credentials <<entity>> {
+    - accessToken : String
+    - refreshToken : String
+    - expiresAt : DateTime
+    + isExpired() : bool
+  }
+
+  class Product <<entity>> {
+    - id : String
+    - title : String
+    - description : String
+    - category : String
+    - price : double
+    - imageUrl : String
+  }
+}
+
+package "data" {
+  interface ProductRepository <<repository>> {
+    + fetchProducts(category:String) : List<Product>
+    + getById(id:String) : Product
+    + listCategories() : List<String>
+  }
+
+  class MockProductRepository <<repository>> {
+    - seed : List<Product>
+    + fetchProducts(category:String) : List<Product>
+    + getById(id:String) : Product
+    + listCategories() : List<String>
+  }
+
+  class Auth0Service <<service>> {
+    - domain : String
+    - clientId : String
+    + loginEmail(email:String, password:String) : Credentials
+    + loginGoogle() : Credentials
+    + revoke(c:Credentials) : void
+    + fetchUser(c:Credentials) : User
+  }
+
+  class LocalStorage <<storage>> {
+    - credentialsKey : String
+    + write(key:String, json:String) : void
+    + read(key:String) : String
+    + delete(key:String) : void
+  }
+
+  class AuthenticationRepository <<repository>> {
+    - instance : AuthenticationRepository
+    - auth0 : Auth0Service
+    - storage : LocalStorage
+    + getInstance() : AuthenticationRepository
+    + loginWithEmailAndPassword(email:String, password:String) : Credentials
+    + loginWithGoogle() : Credentials
+    + logout() : void
+    + isAuthenticated() : bool
+    + getUserProfile() : User
+    + saveCredentials(c:Credentials) : void
+    + readCredentials() : Credentials
+  }
+
+  MockProductRepository -up-|> ProductRepository
+  AuthenticationRepository --> Auth0Service : uses
+  AuthenticationRepository --> LocalStorage : uses
+}
+
+package "utils" {
+  class ThemeController <<controller>> {
+    - isDark : bool
+    + toggle() : void
+    + setDark(value:bool) : void
+  }
+
+  class LanguageController <<controller>> {
+    - localeCode : String  ' "de" / "en"
+    + setLocale(code:String) : void
+  }
+}
+
+package "features.authentication" {
+  class AuthController <<controller>> {
+    - currentUser : User
+    - loading : bool
+    - authRepo : AuthenticationRepository
+    + loginEmail(email:String, password:String) : void
+    + loginGoogle() : void
+    + logout() : void
+    + loadUser() : void
+  }
+
+  class OnboardingController <<controller>> {
+    - pageIndex : int
+    - storage : LocalStorage
+    + nextPage() : void
+    + skip() : void
+    + setCompleted() : void
+    + isCompleted() : bool
+  }
+
+  class LoginScreen <<boundary>> {
+    + render() : void
+  }
+}
+
+package "features.store" {
+  class StoreController <<controller>> {
+    - repo : ProductRepository
+    - products : List<Product>
+    - categories : List<String>
+    - loading : bool
+    + loadProducts(category:String) : void
+    + loadCategories() : void
+  }
+
+  class StoreScreen <<boundary>> {
+    + render() : void
+  }
+
+  class WishlistScreen <<boundary>> {
+    + render() : void
+  }
+}
+
+package "features.account" {
+  class SettingsController <<controller>> {
+    - theme : ThemeController
+    - i18n : LanguageController
+    + toggleTheme() : void
+    + setLocale(code:String) : void
+  }
+
+  class SettingsScreen <<boundary>> {
+    + render() : void
+  }
+}
+
+' ---------- RELATIONSHIPS ----------
+AuthController --> AuthenticationRepository : depends on
+AuthController --> User : manages
+AuthController --> Credentials : manages
+OnboardingController --> LocalStorage : uses
+SettingsController --> ThemeController : uses
+SettingsController --> LanguageController : uses
+StoreController --> ProductRepository : depends on
+
+LoginScreen --> AuthController : interacts
+StoreScreen --> StoreController : interacts
+SettingsScreen --> SettingsController : interacts
+WishlistScreen ..> StoreController : reads
+
+' ---------- NOTES ----------
+note top of MockProductRepository
+  Mock-Daten
+  keine echte API
+end note
+
+note top of WishlistScreen
+  UI-Mock
+  keine Persistenz/Logik
+end note
+
+@enduml
