@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:get/get.dart';
+import '../../../utils/constants/app_strings.dart';
+import '../../../utils/constants/language_controller.dart';
 
 class FavouriteScreen extends StatelessWidget {
   const FavouriteScreen({super.key});
@@ -8,7 +11,9 @@ class FavouriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wishlist', style: Theme.of(context).textTheme.headlineMedium),
+        title: GetBuilder<LanguageController>(
+          builder: (_) => Text(AppStrings.wishlist, style: Theme.of(context).textTheme.headlineMedium),
+        ),
         actions: [
           IconButton(icon: const Icon(Iconsax.add), onPressed: () {}),
         ],

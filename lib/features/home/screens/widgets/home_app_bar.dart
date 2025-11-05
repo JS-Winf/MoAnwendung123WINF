@@ -36,4 +36,34 @@ class THomeAppBar extends StatelessWidget {
       ],
     );
   }
+
+  Future<String> _getUserName() async {
+    try {
+      final authRepo = AuthenticationRepository.instance;
+      final user = await authRepo.currentUser();
+      
+      print('DEBUG: User object: $user');
+      print('DEBUG: User name: ${user?.name}');
+      
+      if (user != null && user.name != null) {
+        final firstName = user.name!.split(' ').first;
+        print('DEBUG: First name: $firstName');
+        return firstName;
+      }
+      
+      // Fallback for demo user
+      final storage = authRepo.deviceStorage;
+      final isDemoUser = storage.read('demoUser');
+      print('DEBUG: Demo user: $isDemoUser');
+      
+      if (isDemoUser == true) {
+        return 'Neele';
+      }
+      
+      return 'Guest';
+    } catch (e) {
+      print('DEBUG: Error getting user name: $e');
+      return 'Neele';
+    }
+  }
 }

@@ -3,6 +3,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
 import '../../../utils/constants/app_strings.dart';
 import '../../../utils/constants/language_controller.dart';
+import 'all_brands.dart';
+import '../../cart/screens/cart.dart';
 
 class StoreScreen extends StatelessWidget {
   const StoreScreen({super.key});
@@ -18,7 +20,10 @@ class StoreScreen extends StatelessWidget {
             builder: (_) => Text(AppStrings.store, style: Theme.of(context).textTheme.headlineMedium),
           ),
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Iconsax.shopping_bag)),
+            IconButton(
+              onPressed: () => Get.to(() => const CartScreen()),
+              icon: const Icon(Iconsax.shopping_bag)
+            ),
           ],
         ),
         body: NestedScrollView(
@@ -63,7 +68,10 @@ class StoreScreen extends StatelessWidget {
                             builder: (_) => Text(AppStrings.featuredBrands, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                           ),
                           GetBuilder<LanguageController>(
-                            builder: (_) => TextButton(onPressed: () {}, child: Text(AppStrings.viewAll)),
+                            builder: (_) => TextButton(
+                              onPressed: () => Get.to(() => const AllBrandsScreen()),
+                              child: Text(AppStrings.viewAll)
+                            ),
                           ),
                         ],
                       ),
@@ -78,41 +86,63 @@ class StoreScreen extends StatelessWidget {
                           mainAxisExtent: 80,
                         ),
                         itemCount: 4,
-                        itemBuilder: (context, index) => Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF764ba2).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Icon(Iconsax.shop, color: Color(0xFF764ba2)),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GetBuilder<LanguageController>(
-                                      builder: (_) => Text('${AppStrings.brand} ${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        itemBuilder: (context, index) {
+                          final brands = [
+                            {'name': 'Nike', 'products': 120, 'icon': 'assets/icons/brands/nike.png'},
+                            {'name': 'Adidas', 'products': 95, 'icon': 'assets/icons/brands/adidas-logo.png'},
+                            {'name': 'Apple', 'products': 80, 'icon': 'assets/icons/brands/apple-logo.png'},
+                            {'name': 'Puma', 'products': 75, 'icon': 'assets/icons/brands/puma-logo.png'},
+                          ];
+                          final brand = brands[index];
+                          
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF764ba2).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.asset(
+                                      brand['icon'] as String,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (context, error, stackTrace) => 
+                                        const Icon(Iconsax.shop, color: Color(0xFF764ba2)),
                                     ),
-                                    GetBuilder<LanguageController>(
-                                      builder: (_) => Text('${(index + 1) * 25} ${AppStrings.products}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        brand['name'] as String,
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      GetBuilder<LanguageController>(
+                                        builder: (_) => Text(
+                                          '${brand['products']} ${AppStrings.products}',
+                                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       )
                     ],
                   ),
@@ -166,20 +196,54 @@ class StoreScreen extends StatelessWidget {
               ),
               itemCount: 6,
               itemBuilder: (context, index) {
-                final categoryProducts = {
-                  'Sports': ['assets/images/products/NikeAirMax.png', 'assets/images/products/Adidas_Football.png', 'assets/images/products/tennis_racket.png'],
-                  'Sport': ['assets/images/products/NikeAirMax.png', 'assets/images/products/Adidas_Football.png', 'assets/images/products/tennis_racket.png'],
-                  'Electronics': ['assets/images/products/iphone_14_pro.png', 'assets/images/products/samsung_s9_mobile.png', 'assets/images/products/acer_laptop_1.png'],
-                  'Elektronik': ['assets/images/products/iphone_14_pro.png', 'assets/images/products/samsung_s9_mobile.png', 'assets/images/products/acer_laptop_1.png'],
-                  'Clothes': ['assets/images/products/leather_jacket_1.png', 'assets/images/products/tshirt_blue_collar.png', 'assets/images/products/product-jeans.png'],
-                  'Kleidung': ['assets/images/products/leather_jacket_1.png', 'assets/images/products/tshirt_blue_collar.png', 'assets/images/products/product-jeans.png'],
-                  'Furniture': ['assets/images/products/office_chair_1.png', 'assets/images/products/bedroom_bed.png', 'assets/images/products/kitchen_counter.png'],
-                  'Möbel': ['assets/images/products/office_chair_1.png', 'assets/images/products/bedroom_bed.png', 'assets/images/products/kitchen_counter.png'],
+                final categoryData = {
+                  'Sports': [
+                    {'image': 'assets/images/products/NikeAirMax.png', 'name': 'Nike Air Max'},
+                    {'image': 'assets/images/products/Adidas_Football.png', 'name': 'Nike Football'},
+                    {'image': 'assets/images/products/tennis_racket.png', 'name': 'Tennis Racket'},
+                  ],
+                  'Sport': [
+                    {'image': 'assets/images/products/NikeAirMax.png', 'name': 'Nike Air Max'},
+                    {'image': 'assets/images/products/Adidas_Football.png', 'name': 'Nike Football'},
+                    {'image': 'assets/images/products/tennis_racket.png', 'name': 'Tennis Racket'},
+                  ],
+                  'Electronics': [
+                    {'image': 'assets/images/products/iphone_14_pro.png', 'name': 'iPhone 14 Pro'},
+                    {'image': 'assets/images/products/samsung_s9_mobile.png', 'name': 'Samsung Galaxy S9'},
+                    {'image': 'assets/images/products/acer_laptop_1.png', 'name': 'Acer Laptop'},
+                  ],
+                  'Elektronik': [
+                    {'image': 'assets/images/products/iphone_14_pro.png', 'name': 'iPhone 14 Pro'},
+                    {'image': 'assets/images/products/samsung_s9_mobile.png', 'name': 'Samsung Galaxy S9'},
+                    {'image': 'assets/images/products/acer_laptop_1.png', 'name': 'Acer Laptop'},
+                  ],
+                  'Clothes': [
+                    {'image': 'assets/images/products/leather_jacket_1.png', 'name': 'Leather Jacket'},
+                    {'image': 'assets/images/products/tshirt_blue_collar.png', 'name': 'Blue T-Shirt'},
+                    {'image': 'assets/images/products/product-jeans.png', 'name': 'Denim Jeans'},
+                  ],
+                  'Kleidung': [
+                    {'image': 'assets/images/products/leather_jacket_1.png', 'name': 'Leather Jacket'},
+                    {'image': 'assets/images/products/tshirt_blue_collar.png', 'name': 'Blue T-Shirt'},
+                    {'image': 'assets/images/products/product-jeans.png', 'name': 'Denim Jeans'},
+                  ],
+                  'Furniture': [
+                    {'image': 'assets/images/products/office_chair_1.png', 'name': 'Leather Armchair'},
+                    {'image': 'assets/images/products/bedroom_bed.png', 'name': 'Bedroom Bed'},
+                    {'image': 'assets/images/products/kitchen_counter.png', 'name': 'Kitchen Counter'},
+                  ],
+                  'Möbel': [
+                    {'image': 'assets/images/products/office_chair_1.png', 'name': 'Leather Armchair'},
+                    {'image': 'assets/images/products/bedroom_bed.png', 'name': 'Bedroom Bed'},
+                    {'image': 'assets/images/products/kitchen_counter.png', 'name': 'Kitchen Counter'},
+                  ],
                   'Cosmetics': [],
                   'Kosmetik': [],
                 };
-                final images = categoryProducts[category] ?? [];
-                final imagePath = images.isNotEmpty && index < images.length ? images[index] : null;
+                final products = categoryData[category] ?? [];
+                final product = index < products.length ? products[index] : null;
+                final imagePath = product?['image'];
+                final productName = product?['name'] ?? '$category Item ${index + 1}';
                 
                 return Container(
                   decoration: BoxDecoration(
@@ -244,7 +308,7 @@ class StoreScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('$category Item ${index + 1}', 
+                              Text(productName, 
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)
                               ),
                               GetBuilder<LanguageController>(

@@ -169,8 +169,11 @@ class ProfileScreen extends StatelessWidget {
                 future: AuthenticationRepository.instance.currentUser(),
                 builder: (context, snapshot) {
                   final user = snapshot.data;
-                  final userName = user?.name ?? user?.nickname ?? 'HotShop User';
-                  final userEmail = user?.email ?? 'user@hotshop.com';
+                  final storage = AuthenticationRepository.instance.deviceStorage;
+                  final isDemoUser = storage.read('demoUser') == true;
+                  
+                  final userName = user?.name ?? user?.nickname ?? (isDemoUser ? 'Demo User' : 'HotShop User');
+                  final userEmail = user?.email ?? (isDemoUser ? 'demo@test.com' : 'user@hotshop.com');
                   
                   return GetBuilder<LanguageController>(
                     builder: (_) => Column(
@@ -197,17 +200,10 @@ class ProfileScreen extends StatelessWidget {
                 future: AuthenticationRepository.instance.currentUser(),
                 builder: (context, snapshot) {
                   final user = snapshot.data;
-                  final userId = user?.sub ?? 'auth0|unknown';
+                  final storage = AuthenticationRepository.instance.deviceStorage;
+                  final isDemoUser = storage.read('demoUser') == true;
                   
-                  return GetBuilder<LanguageController>(
-                    builder: (_) => TProfileMenu(title: AppStrings.userId, value: userId, icon: Icons.copy, onPressed: (){}),
-                  );
-                },
-              ),
-              FutureBuilder(
-                future: AuthenticationRepository.instance.currentUser(),
-                builder: (context, snapshot) {
-                  final user = snapshot.data;
+                  final userId = user?.sub ?? (isDemoUser ? 'demo|12345' : 'auth0|unknown');
                   final userPhone = user?.phoneNumber ?? AppStrings.noInformation;
                   final userGender = user?.gender ?? AppStrings.noInformation;
                   final userBirthdate = user?.birthdate ?? AppStrings.noInformation;
@@ -215,6 +211,7 @@ class ProfileScreen extends StatelessWidget {
                   return GetBuilder<LanguageController>(
                     builder: (_) => Column(
                       children: [
+                        TProfileMenu(title: AppStrings.userId, value: userId, icon: Icons.copy, onPressed: (){}),
                         TProfileMenu(
                           title: AppStrings.phoneNumber, 
                           value: userPhone, 

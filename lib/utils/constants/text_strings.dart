@@ -60,7 +60,7 @@ class TTexts {
 
 
   /* Home */
-  static const String homeAppbarTitle = "Good day to play Dart";
-  static const String homeAppbarSubtitle = "Neele Zander";
+  static const String homeAppbarTitle = "Good day for shopping";
+  static const String homeAppbarSubtitle = "Hello Demo User";
 
 }

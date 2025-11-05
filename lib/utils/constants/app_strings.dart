@@ -74,6 +74,7 @@ class AppStrings {
   static String get noInformation => isGerman ? "Keine Information" : "No information";
   
   // Home Screen
+  static String get hello => isGerman ? "Hallo" : "Hello";
   static String get friend => isGerman ? "Freund" : "Friend";
   static String get promoBanner => isGerman ? "Werbebanner" : "Promo Banner";
   
@@ -88,4 +89,5 @@ class AppStrings {
   static String get clothes => isGerman ? "Kleidung" : "Clothes";
   static String get cosmetics => isGerman ? "Kosmetik" : "Cosmetics";
   static String get brandName => isGerman ? "Markenname" : "Brand Name";
+  static String get allBrands => isGerman ? "Alle Marken" : "All Brands";
 }

@@ -1,9 +1,18 @@
+// ============================================================================
+// HOME SCREEN - HAUPTSEITE DER APP
+// Zeigt: Personalisierte Begrüßung, Suchfunktion, Promo-Banner, Produkte
+// ============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
 import '../../../utils/constants/app_strings.dart';
 import '../../../utils/constants/language_controller.dart';
+import '../../../data/repositories/authentication/authentication_repository.dart';
+import '../../cart/screens/cart.dart';
 
+/// Stateless Widget für bessere Performance
+/// Implementiert Material Design Guidelines
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -14,7 +23,8 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Primary Header Container
+            // ========== HEADER BEREICH ==========
+            /// Gradient Header mit App Bar, Suche und Freunde-Sektion
             Container(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
@@ -35,7 +45,8 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      // AppBar
+                      // ========== PERSONALISIERTE APP BAR ==========
+                      /// Zeigt dynamische Begrüßung basierend auf Auth0 User
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -47,8 +58,16 @@ class HomeScreen extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70)
                                 ),
                               ),
-                              Text('HotShop', 
-                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)
+                              FutureBuilder<String>(
+                                future: _getUserName(),
+                                builder: (context, snapshot) {
+                                  final name = snapshot.data ?? 'Guest';
+                                  return GetBuilder<LanguageController>(
+                                    builder: (_) => Text('${AppStrings.hello} $name', 
+                                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),
@@ -56,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               IconButton(
                                 icon: const Icon(Iconsax.shopping_bag, color: Colors.white),
-                                onPressed: () {},
+                                onPressed: () => Get.to(() => const CartScreen()),
                               ),
                               Positioned(
                                 right: 0,
@@ -76,7 +95,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
                       
-                      // Search Container
+                      // ========== SUCHFUNKTION ==========
+                      /// Responsive Suchfeld mit Material Design
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
@@ -102,7 +122,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
                       
-                      // Friends Section
+                      // ========== SOZIALE FUNKTIONEN ==========
+                      /// Freunde-Avatars für soziale Interaktion
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -179,7 +200,8 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  // Promo Slider
+                  // ========== MARKETING BEREICH ==========
+                  /// Promo-Banner Slider für Angebote und Werbung
                   SizedBox(
                     height: 200,
                     child: PageView.builder(
@@ -242,7 +264,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
                   
-                  // Popular Products Section
+                  // ========== PRODUKT SHOWCASE ==========
+                  /// Grid-Layout für beliebte Produkte
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -269,7 +292,7 @@ class HomeScreen extends StatelessWidget {
                         {'name': 'Nike Air Max', 'brand': 'Nike', 'price': '129.99', 'image': 'assets/images/products/NikeAirMax.png'},
                         {'name': 'iPhone 14 Pro', 'brand': 'Apple', 'price': '999.99', 'image': 'assets/images/products/iphone_14_pro.png'},
                         {'name': 'Leather Jacket', 'brand': 'Fashion', 'price': '89.99', 'image': 'assets/images/products/leather_jacket_1.png'},
-                        {'name': 'Leather Chair', 'brand': 'Furniture', 'price': '199.99', 'image': 'assets/images/products/office_chair_1.png'},
+                        {'name': 'Leather Armchair', 'brand': 'Furniture', 'price': '199.99', 'image': 'assets/images/products/office_chair_1.png'},
                       ];
                       final product = products[index];
                       
@@ -376,5 +399,44 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<String> _getUserName() async {
+    try {
+      final authRepo = AuthenticationRepository.instance;
+      final user = await authRepo.currentUser();
+      
+      if (user != null) {
+        // Try name first
+        if (user.name != null && user.name!.isNotEmpty && !user.name!.contains('@')) {
+          final firstName = user.name!.split(' ').first;
+          return firstName;
+        }
+        
+        // Try nickname
+        if (user.nickname != null && user.nickname!.isNotEmpty && !user.nickname!.contains('@')) {
+          return user.nickname!;
+        }
+        
+        // Extract name from email
+        if (user.email != null && user.email!.isNotEmpty) {
+          final emailPart = user.email!.split('@').first;
+          final cleanName = emailPart.replaceAll(RegExp(r'[0-9._-]'), '');
+          if (cleanName.isNotEmpty) {
+            return cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
+          }
+        }
+      }
+      
+      // Fallback for demo user
+      final storage = authRepo.deviceStorage;
+      if (storage.read('demoUser') == true) {
+        return 'Demo User';
+      }
+      
+      return 'Guest';
+    } catch (e) {
+      return 'Guest';
+    }
   }
 }

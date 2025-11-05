@@ -44,15 +44,32 @@ class VerifyEmailController extends GetxController {
   }
 
   Future<void> checkEmailVerificationStatus() async {
-    final currentUser = await AuthenticationRepository.instance.currentUser();
+    try {
+      TLoaders.warningSnackbar(title: 'Checking...', message: 'Verifying your email status');
+      
+      // Clear cache to force fresh data
+      final authRepo = AuthenticationRepository.instance;
+      authRepo.clearUserCache();
+      
+      // Wait a moment for Auth0 to update
+      await Future.delayed(const Duration(seconds: 2));
+      
+      final currentUser = await authRepo.currentUser();
 
-    if (currentUser != null && (currentUser.isEmailVerified ?? false)) {
-      Get.off(() => SuccessScreen(
-          image: TImages.successfullyRegisterAnimation,
-          title: TTexts.yourAccountCreatedTitle,
-          subtitle: TTexts.yourAccountCreatedSubtitle,
-          onPressed: () =>
-              AuthenticationRepository.instance.screenRedirect()));
+      if (currentUser != null && (currentUser.isEmailVerified ?? false)) {
+        Get.off(() => SuccessScreen(
+            image: TImages.successfullyRegisterAnimation,
+            title: TTexts.yourAccountCreatedTitle,
+            subtitle: TTexts.yourAccountCreatedSubtitle,
+            onPressed: () => authRepo.screenRedirect()));
+      } else {
+        TLoaders.errorSnackbar(
+          title: 'Email not verified', 
+          message: 'Please check your email and click the verification link, then try again.'
+        );
+      }
+    } catch (e) {
+      TLoaders.errorSnackbar(title: 'Error', message: 'Please try again or use the X button to login manually.');
     }
   }
 }
