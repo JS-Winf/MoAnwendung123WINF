@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/helpers/helper_functions.dart';
 
+/// Kreisförmiges Bild-Widget mit optionalem Overlay-Farbton und Hintergrund.
+/// Unterstützt lokale Assets und Netzwerkbilder.
 class TCircularImage extends StatelessWidget {
   const TCircularImage({
     super.key,
-    this.width = 56,
-    this.height = 56,
-    this.overlayColor,
-    this.backgroundColor,
-    required this.image,
-    this.fit = BoxFit.cover,
-    this.padding = TSizes.sm,
-    this.isNetworkImage = false,
+    this.width = 56,                 // Standardbreite des Kreises
+    this.height = 56,                // Standardhöhe des Kreises
+    this.overlayColor,               // Optionaler Farbüberzug (z. B. für Tönungen)
+    this.backgroundColor,            // Optionaler Hintergrund (überschreibt Theme-abhängige Farbe)
+    required this.image,             // Bildpfad bzw. URL
+    this.fit = BoxFit.cover,         // Skalierung des Bildes innerhalb des Kreises
+    this.padding = TSizes.sm,        // Innenabstand um das Bild herum
+    this.isNetworkImage = false,     // true = NetworkImage, false = AssetImage
   });
 
   final BoxFit? fit;
@@ -27,18 +29,20 @@ class TCircularImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
-      padding: EdgeInsets.all(padding),
+      width: width,                             // Kreisbreite
+      height: height,                           // Kreishöhe
+      padding: EdgeInsets.all(padding),         // Innenabstand
       decoration: BoxDecoration(
+        // Hintergrund: entweder explizit gesetzt oder abhängig vom Theme (hell/dunkel)
         color: backgroundColor ?? (THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white),
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(100), // 100 → runde Form
       ),
       child: Center(
         child: Image(
-          fit: fit,
+          fit: fit,                              // Bild-Skalierung im verfügbaren Raum
+          // Quelle: Netzwerk oder Asset, je nach Flag
           image: isNetworkImage ? NetworkImage(image) : AssetImage(image),
-          color: overlayColor,
+          color: overlayColor,                   // Optionaler Overlay-Farbton
         ),
       ),
     );

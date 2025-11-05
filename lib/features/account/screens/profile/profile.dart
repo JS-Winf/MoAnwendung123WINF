@@ -12,9 +12,17 @@ import 'package:get/get.dart';
 
 import 'widgets/profile_menu.dart';
 
+/// Profilseite:
+/// - Zeigt Profilbild und grundlegende/ persönliche Informationen
+/// - Felder (Telefon, Geschlecht, Geburtstag) können per Dialog editiert werden
+/// - Mehrsprachige Texte via LanguageController / AppStrings
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  /// Öffnet passendes Edit-UI je nach Feldtitel:
+  /// - Geschlecht → Auswahl-Dialog
+  /// - Geburtstag → DatePicker
+  /// - Sonst → generisches Textfeld im AlertDialog
   void _editField(BuildContext context, String title, String currentValue) {
     if (title == AppStrings.gender) {
       _showGenderDialog(context);
@@ -26,7 +34,10 @@ class ProfileScreen extends StatelessWidget {
       return;
     }
     
-    final controller = TextEditingController(text: currentValue == AppStrings.noInformation ? '' : currentValue);
+    // Generischer Edit-Dialog mit TextField
+    final controller = TextEditingController(
+      text: currentValue == AppStrings.noInformation ? '' : currentValue,
+    );
     
     showDialog(
       context: context,
@@ -46,6 +57,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
+              // Hier nur Demo: Speichern wird per Snackbar quittiert
               Get.snackbar('Info', 'Änderung gespeichert: ${controller.text}');
               Navigator.pop(context);
             },
@@ -56,6 +68,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
   
+  /// Öffnet einen DatePicker zur Auswahl des Geburtstags
   void _showDatePicker(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -70,6 +83,7 @@ class ProfileScreen extends StatelessWidget {
     }
   }
   
+  /// Auswahl-Dialog für Geschlecht (Male / Female / Diverse)
   void _showGenderDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -114,22 +128,25 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar mit Zurück-Pfeil und lokalisiertem Titel
       appBar: TAppBar(
         showBackArrow: true,
         title: GetBuilder<LanguageController>(
           builder: (_) => Text(AppStrings.profile),
         ),
       ),
+
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(TSizes.defaultSpace),
           child: Column(
             children: [
-            /* Profile Picture */
+              /* Profile Picture */
               SizedBox(
                 width: double.infinity,
                 child: Column(
                   children: [
+                    // Profilbild aus dem aktuellen Userprofil (FutureBuilder)
                     FutureBuilder(
                       future: AuthenticationRepository.instance.currentUser(),
                       builder: (context, snapshot) {
@@ -145,26 +162,32 @@ class ProfileScreen extends StatelessWidget {
                         );
                       },
                     ),
+                    // Button zum Ändern des Profilbilds (noch ohne Aktion)
                     TextButton(
-                        onPressed: () {},
-                        child: GetBuilder<LanguageController>(
-                          builder: (_) => Text(AppStrings.changeProfilePicture),
-                        )),
+                      onPressed: () {},
+                      child: GetBuilder<LanguageController>(
+                        builder: (_) => Text(AppStrings.changeProfilePicture),
+                      ),
+                    ),
                   ],
                 ),
               ),
 
-              /* Details */
+              /* Trenner */
               const SizedBox(height: TSizes.spaceBtwItems / 2),
               const Divider(),
               const SizedBox(height: TSizes.spaceBtwItems),
 
-              /* Heading Profile Info */
+              /* Überschrift: Profil-Informationen */
               GetBuilder<LanguageController>(
-                builder: (_) => TSectionHeading(title: AppStrings.profileInformation, showActionButton: false),
+                builder: (_) => TSectionHeading(
+                  title: AppStrings.profileInformation,
+                  showActionButton: false,
+                ),
               ),
               const SizedBox(height: TSizes.spaceBtwItems),
 
+              // Name & E-Mail aus dem Profil (mit Demo-Fallbacks)
               FutureBuilder(
                 future: AuthenticationRepository.instance.currentUser(),
                 builder: (context, snapshot) {
@@ -178,6 +201,7 @@ class ProfileScreen extends StatelessWidget {
                   return GetBuilder<LanguageController>(
                     builder: (_) => Column(
                       children: [
+                        // Noch ohne Edit-Action
                         TProfileMenu(title: AppStrings.name, value: userName, onPressed: (){}),
                         TProfileMenu(title: AppStrings.email, value: userEmail, onPressed: (){}),
                       ],
@@ -190,12 +214,16 @@ class ProfileScreen extends StatelessWidget {
               const Divider(),
               const SizedBox(height: TSizes.spaceBtwItems),
 
-              /* Heading Personal Info */
+              /* Überschrift: Persönliche Informationen */
               GetBuilder<LanguageController>(
-                builder: (_) => TSectionHeading(title: AppStrings.personalInformation, showActionButton: false),
+                builder: (_) => TSectionHeading(
+                  title: AppStrings.personalInformation,
+                  showActionButton: false,
+                ),
               ),
               const SizedBox(height: TSizes.spaceBtwItems),
 
+              // UserId, Telefon, Geschlecht, Geburtstag (teilweise editierbar)
               FutureBuilder(
                 future: AuthenticationRepository.instance.currentUser(),
                 builder: (context, snapshot) {
@@ -211,35 +239,47 @@ class ProfileScreen extends StatelessWidget {
                   return GetBuilder<LanguageController>(
                     builder: (_) => Column(
                       children: [
+                        // User-ID (Icon: Kopieren — Aktion aktuell leer)
                         TProfileMenu(title: AppStrings.userId, value: userId, icon: Icons.copy, onPressed: (){}),
+
+                        // Telefon: öffnet generischen Edit-Dialog
                         TProfileMenu(
                           title: AppStrings.phoneNumber, 
                           value: userPhone, 
-                          onPressed: () => _editField(context, AppStrings.phoneNumber, userPhone)
+                          onPressed: () => _editField(context, AppStrings.phoneNumber, userPhone),
                         ),
+
+                        // Geschlecht: öffnet Auswahl-Dialog
                         TProfileMenu(
                           title: AppStrings.gender, 
                           value: userGender, 
-                          onPressed: () => _editField(context, AppStrings.gender, userGender)
+                          onPressed: () => _editField(context, AppStrings.gender, userGender),
                         ),
+
+                        // Geburtstag: öffnet DatePicker
                         TProfileMenu(
                           title: AppStrings.dateOfBirth, 
                           value: userBirthdate, 
-                          onPressed: () => _editField(context, AppStrings.dateOfBirth, userBirthdate)
+                          onPressed: () => _editField(context, AppStrings.dateOfBirth, userBirthdate),
                         ),
                       ],
                     ),
                   );
                 },
               ),
+
               const Divider(),
               const SizedBox(height: TSizes.spaceBtwItems),
 
+              /* Konto löschen (nur Button mit roter Schrift; noch ohne Aktion) */
               Center(
                 child: TextButton(
                   onPressed: (){},
                   child: GetBuilder<LanguageController>(
-                    builder: (_) => Text(AppStrings.deleteAccount, style: TextStyle(color: Colors.red)),
+                    builder: (_) => Text(
+                      AppStrings.deleteAccount,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ),
               ),

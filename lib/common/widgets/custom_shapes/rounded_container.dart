@@ -2,6 +2,8 @@ import 'package:hotshop/utils/constants/colors.dart';
 import 'package:hotshop/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 
+/// Abgerundeter, wiederverwendbarer Container.
+/// Unterstützt optionale Größe, Außen-/Innenabstände, Hintergrundfarbe und (optionalen) Rand.
 class TRoundedContainer extends StatelessWidget {
   const TRoundedContainer({
     super.key,
@@ -10,22 +12,21 @@ class TRoundedContainer extends StatelessWidget {
     this.height,
     this.margin,
     this.padding,
-    this.showBorder = false,
-    this.radius = TSizes.cardRadiusLg,
-    this.backgroundColor = TColors.white,
-    this.borderColor = TColors.borderPrimary,
+    this.showBorder = false,                          // Standard: kein Rahmen
+    this.radius = TSizes.cardRadiusLg,                // Standard-Radius aus den App-Sizes
+    this.backgroundColor = TColors.white,             // Standard-Hintergrund: Weiß
+    this.borderColor = TColors.borderPrimary,         // Standard-Randfarbe
   });
 
-  final double? width;
-  final double? height;
-  final double radius;
-  final Widget? child;
-  final bool showBorder;
-  final Color borderColor;
-  final Color backgroundColor;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-
+  final double? width;                                // Breite (optional)
+  final double? height;                               // Höhe (optional)
+  final double radius;                                // Eckenradius
+  final Widget? child;                                // Inhalt
+  final bool showBorder;                              // Rahmen ein-/ausschalten
+  final Color borderColor;                            // Farbe des Rahmens
+  final Color backgroundColor;                        // Hintergrundfarbe
+  final EdgeInsetsGeometry? padding;                  // Innenabstand
+  final EdgeInsetsGeometry? margin;                   // Außenabstand
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +37,8 @@ class TRoundedContainer extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(radius),
-        border: showBorder ? Border.all(color: borderColor) : null,
+        borderRadius: BorderRadius.circular(radius),  // Abgerundete Ecken
+        border: showBorder ? Border.all(color: borderColor) : null, // Optionaler Rahmen
       ),
       child: child,
     );

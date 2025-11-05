@@ -4,23 +4,32 @@ import 'package:get_storage/get_storage.dart';
 
 import '../../screens/login/login.dart';
 
+/// Controller für das Onboarding (GetX).
+/// Steuert Seitenwechsel, Dots-Indikator und das Überspringen/Abschließen.
 class OnboardingController extends GetxController {
+  /// Singleton-Zugriff
   static OnboardingController get instance => Get.find();
 
-  /// Variables
+  /// PageView-Controller für die Onboarding-Seiten
   final pageController = PageController();
+
+  /// Aktuelle Seite (reaktiv für UI-Updates, z. B. Dots)
   Rx<int> currentPageIndex = 0.obs;
 
-  /// Update current index when page scroll
+  /// Beim Scrollen des PageView den aktuellen Index aktualisieren
   void updatePageIndicator(index) => currentPageIndex.value = index;
 
-  /// Jump to the specific dot selected page
+  /// Klick auf einen Dot: zur entsprechenden Seite springen
+  /// Hinweis: `jumpTo` erwartet Pixel; hier wird direkt `index` übergeben.
+  /// (Beibehalten wie im Original; ggf. später auf `jumpToPage(index)` ändern.)
   void dotNavigationClick(index) {
     currentPageIndex.value = index;
     pageController.jumpTo(index);
   }
 
-  /// Update current index & jump to next page
+  /// Weiter zur nächsten Seite; bei letzter Seite:
+  /// - Flag 'isFirstTime' setzen
+  /// - zum Login weiterleiten
   void nextPage() {
     if (currentPageIndex.value == 2) {
       final storage = GetStorage();
@@ -33,6 +42,7 @@ class OnboardingController extends GetxController {
     }
   }
 
+  /// Onboarding überspringen: direkt zur letzten Seite springen
   void skipPage() {
     currentPageIndex.value = 2;
     pageController.jumpToPage(2);

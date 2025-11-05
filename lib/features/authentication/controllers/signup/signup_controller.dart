@@ -8,67 +8,86 @@ import 'package:get/get.dart';
 import '../../../../utils/helpers/network_manager.dart';
 import '../../../../utils/popups/full_screen_loader.dart';
 
+/// Controller für den Signup-Prozess (GetX).
+/// Verantwortlich für:
+/// - Formularzustand & Validierung
+/// - Datenschutz-Checkbox
+/// - Netzwerkcheck
+/// - Loading-Dialoge & Snackbars
+/// - Delegation an das AuthenticationRepository (Auth0)
 class SignupController extends GetxController {
+  /// Singleton-Zugriff
   static SignupController get instance => Get.find();
 
-  /// Variables
-  final hidePassword = true.obs;
-  final privacyPolicy = false.obs;
+  /// Reaktive UI-States
+  final hidePassword = true.obs;   // Passwort ein-/ausblenden
+  final privacyPolicy = false.obs; // Datenschutz/AGB akzeptiert?
+
+  /// TextController für Formfelder
   final firstName = TextEditingController();
   final lastName = TextEditingController();
   final username = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();
+
+  /// Key für Formular-Validierung
   GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
 
-  /// Signup
+  /// Registrierung durchführen
   Future<void> signup() async {
     try {
-      // Start loading
+      // 1) Vollbild-Loader anzeigen
       TFullScreenLoader.openLoadingDialog(
-          'We are processing your information...', TImages.docerAnimation);
+        'We are processing your information...',
+        TImages.docerAnimation,
+      );
 
-      // Check internet connectivity
+      // 2) Internetverbindung prüfen
       final isConnected = await NetworkManager.instance.isConnected();
       if (!isConnected) {
         TFullScreenLoader.stopLoading();
         return;
       }
 
-      // Form validation
+      // 3) Formular validieren
       if (!signupFormKey.currentState!.validate()) {
         TFullScreenLoader.stopLoading();
         return;
       }
 
-      // Privacy policy check
+      // 4) Datenschutz akzeptiert?
       if (!privacyPolicy.value) {
         TFullScreenLoader.stopLoading();
         TLoaders.warningSnackbar(
-            title: 'Accept Privacy Policy',
-            message:
-                'In order to create account, you must have to read and accept the Privacy Policy & Terms of Use.');
+          title: 'Accept Privacy Policy',
+          message:
+              'In order to create account, you must have to read and accept the Privacy Policy & Terms of Use.',
+        );
         return;
       }
 
-      // Register user
+      // 5) Nutzer registrieren (Auth0 über Repository)
       await AuthenticationRepository.instance
           .registerWithEmailUsernameAndPassword(
-              email.text.trim(), username.text, password.text.trim());
+        email.text.trim(),
+        username.text,
+        password.text.trim(),
+      );
 
-      // Remove loader
+      // 6) Loader beenden
       TFullScreenLoader.stopLoading();
 
-      // Show success message
+      // 7) Erfolgsmeldung anzeigen
       TLoaders.successSnackbar(
-          title: 'Congratulations',
-          message: 'Your account has been created! Verify email to continue.');
+        title: 'Congratulations',
+        message: 'Your account has been created! Verify email to continue.',
+      );
 
-      // Move to Verify Email Screen
+      // 8) Zur E-Mail-Verifizierung navigieren
       Get.to(() => VerifyEmailScreen(email: email.text.trim()));
     } catch (e) {
+      // Fehlerfall: Loader schließen & Fehlermeldung zeigen
       TFullScreenLoader.stopLoading();
-
       TLoaders.errorSnackbar(title: 'Oh Snap!', message: e.toString());
     }
   }

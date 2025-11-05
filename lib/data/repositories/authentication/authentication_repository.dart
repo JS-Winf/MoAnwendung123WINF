@@ -22,24 +22,24 @@ class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
 
   // ========== KONFIGURATION ==========
-  
+
   /// Lokaler Speicher für User Preferences und Cache
   final deviceStorage = GetStorage();
-  
+
   /// Auth0 Client - Enterprise-Level Authentifizierung
   /// Domain und Client ID aus Auth0 Dashboard
   final Auth0 _auth0 = Auth0(
-      'dev-7lmqopbf50r72pqb.eu.auth0.com', 
+      'dev-7lmqopbf50r72pqb.eu.auth0.com',
       '0kVF5tYFusk5b6VsEjeh9uV0zFwD2IHC'
   );
-  
+
   /// Caching-System zur Reduzierung von API-Aufrufen
   /// Verhindert "Too Many Requests" Fehler
   UserProfile? _cachedUser;
   DateTime? _lastFetch;
 
   // ========== LIFECYCLE MANAGEMENT ==========
-  
+
   /// Wird automatisch nach App-Start aufgerufen
   /// Entfernt Splash Screen und leitet zur passenden Seite weiter
   @override
@@ -51,7 +51,7 @@ class AuthenticationRepository extends GetxController {
   }
 
   // ========== NAVIGATION LOGIC ==========
-  
+
   /// Intelligente Weiterleitung basierend auf User-Status
   /// Prüft: Login-Status, Email-Verifizierung, Onboarding
   screenRedirect() async {
@@ -59,18 +59,22 @@ class AuthenticationRepository extends GetxController {
       final isLoggedIn = await _auth0.credentialsManager.hasValidCredentials();
 
       if (isLoggedIn) {
+        // Wenn eingeloggt: Profil abrufen (mit Cache)
         final userProfile = await currentUser();
 
         if (userProfile != null) {
+          // E-Mail verifiziert? → in die App, sonst Verifizierungs-Screen
           if (userProfile.isEmailVerified ?? false) {
             Get.offAll(() => const NavigationMenu());
           } else {
             Get.offAll(() => VerifyEmailScreen(email: userProfile.email));
           }
         } else {
+          // Fallback: zurück zum Login
           Get.offAll(() => const LoginScreen());
         }
       } else {
+        // Nicht eingeloggt: First-Time-Flag prüfen → Onboarding oder Login
         deviceStorage.writeIfNull('isFirstTime', false);
 
         deviceStorage.read('isFirstTime') != false
@@ -78,7 +82,7 @@ class AuthenticationRepository extends GetxController {
             : Get.offAll(const OnboardingScreen());
       }
     } catch (e) {
-      // Fallback for Android demo - skip auth
+      // Fallback für Android-Demo: Auth überspringen und Onboarding/Login zeigen
       print('Auth0 error, using demo mode: $e');
       deviceStorage.writeIfNull('isFirstTime', false);
       deviceStorage.read('isFirstTime') != false
@@ -88,11 +92,12 @@ class AuthenticationRepository extends GetxController {
   }
 
   // ========== AUTHENTIFIZIERUNG METHODEN ==========
-  
+
   /// Email/Password Login mit Auth0
   /// Inklusive Demo-Mode für Präsentationszwecke
   Future<void> loginWithEmailAndPassword(String email, String password) async {
     try {
+      // Klassischer Resource Owner Password Flow (über Auth0 API)
       final credentials = await _auth0.api.login(
           usernameOrEmail: email,
           password: password,
@@ -100,16 +105,17 @@ class AuthenticationRepository extends GetxController {
           scopes: {'openid', 'profile', 'email', 'offline_access'},
           audience: '');
 
+      // Credentials sicher im CredentialsManager ablegen
       await _auth0.credentialsManager.storeCredentials(credentials);
     } catch (e) {
       print('Auth0 login error: $e');
-      // Demo mode - simulate successful login
+      // Demo mode - simuliert erfolgreichen Login ohne Auth0
       if (email == 'demo@test.com' && password == 'demo123') {
         deviceStorage.write('demoUser', true);
         Get.offAll(() => const NavigationMenu());
         return;
       }
-      rethrow;
+      rethrow; // Fehler weitergeben, damit UI reagieren kann
     }
   }
 
@@ -118,23 +124,25 @@ class AuthenticationRepository extends GetxController {
   Future<void> loginWithGoogle() async {
     try {
       final credentials = await _auth0.webAuthentication(
-        scheme: 'com.example.hotshop'
+        scheme: 'com.example.hotshop' // App-spezifisches URL-Scheme
       ).login(
           scopes: {'openid', 'profile', 'email', 'offline_access'},
           audience: '',
-          useEphemeralSession: false, // Force account selection
+          useEphemeralSession: false, // Account-Auswahl erzwingen
           parameters: {
             'connection': 'google-oauth2',
-            'prompt': 'select_account' // Force Google account selection
+            'prompt': 'select_account' // Google-Account Auswahl-Dialog
           });
 
+      // Tokens speichern → persistenter Login
       await _auth0.credentialsManager.storeCredentials(credentials);
-      screenRedirect();
+      screenRedirect(); // Nach erfolgreichem Login weiterleiten
     } catch (e) {
       rethrow;
     }
   }
 
+  /// Registrierung via E-Mail, Username, Passwort (Auth0 Database Connection)
   Future<void> registerWithEmailUsernameAndPassword(
       String email, String username, String password) async {
     try {
@@ -143,6 +151,7 @@ class AuthenticationRepository extends GetxController {
           password: password,
           connection: 'dartify-auth',
           username: username);
+      // Nach Sign-up direkt einloggen
       await loginWithEmailAndPassword(email, password);
     } catch (e) {
       print(e);
@@ -150,6 +159,7 @@ class AuthenticationRepository extends GetxController {
     }
   }
 
+  /// E-Mail Verifikation anstoßen (noch nicht implementiert)
   Future<void> sendEmailVerification() async {
     try {
       return;
@@ -160,12 +170,12 @@ class AuthenticationRepository extends GetxController {
   }
 
   // ========== USER MANAGEMENT ==========
-  
+
   /// Benutzer-Profil abrufen mit intelligentem Caching
   /// Reduziert API-Aufrufe und verbessert Performance
   Future<UserProfile?> currentUser() async {
     try {
-      // Return cached user if available and recent (within 5 minutes)
+      // Wenn Cache vorhanden & jünger als 5 Minuten → Cache zurückgeben
       if (_cachedUser != null && _lastFetch != null) {
         final timeDiff = DateTime.now().difference(_lastFetch!);
         if (timeDiff.inMinutes < 5) {
@@ -173,25 +183,28 @@ class AuthenticationRepository extends GetxController {
         }
       }
 
+      // Ohne gültige Credentials: kein User
       final hasCredentials =
           await _auth0.credentialsManager.hasValidCredentials();
       if (!hasCredentials) return null;
 
+      // Tokens holen → Userprofil via Auth0 API laden
       final credentials = await _auth0.credentialsManager.credentials();
       final userProfile =
           await _auth0.api.userProfile(accessToken: credentials.accessToken);
 
-      // Cache the result
+      // Ergebnis cachen
       _cachedUser = userProfile;
       _lastFetch = DateTime.now();
-      
+
       return userProfile;
     } catch (e) {
-      // Return cached user if API fails
+      // Bei API-Fehler: Falls vorhanden, alten Cache liefern
       return _cachedUser;
     }
   }
 
+  /// Regulärer Logout: Tokens löschen, Demo-Flag entfernen, FirstTime zurücksetzen
   Future<void> logout() async {
     try {
       await _auth0.credentialsManager.clearCredentials();
@@ -205,7 +218,7 @@ class AuthenticationRepository extends GetxController {
     }
   }
 
-  // Force logout for demo
+  /// Forciertes Logout für Demo-Zwecke: Alles lokal löschen
   Future<void> forceLogout() async {
     await _auth0.credentialsManager.clearCredentials();
     deviceStorage.erase(); // Clear all local storage
@@ -214,11 +227,9 @@ class AuthenticationRepository extends GetxController {
     Get.offAll(() => const LoginScreen());
   }
 
-  // Clear user cache to force fresh data
+  /// Cache leeren, um frische Profildaten zu erzwingen
   void clearUserCache() {
     _cachedUser = null;
     _lastFetch = null;
   }
-
-
 }

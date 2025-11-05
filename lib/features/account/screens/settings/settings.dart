@@ -16,111 +16,194 @@ import '../../../../common/widgets/list_tiles/user_profile_tile.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/sizes.dart';
 
+/// Einstellungs-Seite:
+/// - Header mit gebogenen Kanten + User-Info
+/// - Abschnitte „Account Settings“ & „App Settings“
+/// - Sprache/Dark Mode umschaltbar
+/// - Logout-Button unten
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // LanguageController für dynamische UI-Texte (Internationalisierung)
     final languageController = Get.put(LanguageController());
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             /* Header */
-            TPrimaryHeaderContainer(child: Column(
-              children: [
-                GetBuilder<LanguageController>(
-                  builder: (_) => TAppBar(title: Text(AppStrings.account, style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.white))),
-                ),
+            TPrimaryHeaderContainer(
+              child: Column(
+                children: [
+                  // AppBar im Header mit weißem Titeltext
+                  GetBuilder<LanguageController>(
+                    builder: (_) => TAppBar(
+                      title: Text(
+                        AppStrings.account,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .apply(color: TColors.white),
+                      ),
+                    ),
+                  ),
 
-                /* User Profile Card */
-                TUserProfileTile(onPressed: () => Get.to(() => const ProfileScreen()),),
-                const SizedBox(height: TSizes.spaceBtwSections),
-              ],
-            )),
+                  /* User Profile Card (Avatar, Name, Mail, Edit-Icon) */
+                  TUserProfileTile(
+                    onPressed: () => Get.to(() => const ProfileScreen()),
+                  ),
 
-            /* Menu */
+                  const SizedBox(height: TSizes.spaceBtwSections),
+                ],
+              ),
+            ),
+
+            /* Menü-Bereich */
             Padding(
               padding: const EdgeInsets.all(TSizes.defaultSpace),
               child: Column(
                 children: [
-                  /* Account settings */
+                  /* Account-Einstellungen Überschrift */
                   GetBuilder<LanguageController>(
-                    builder: (_) => TSectionHeading(title: AppStrings.accountSettings, showActionButton: false),
+                    builder: (_) =>
+                        TSectionHeading(title: AppStrings.accountSettings, showActionButton: false),
                   ),
                   const SizedBox(height: TSizes.spaceBtwItems),
-                  
-                  GetBuilder<LanguageController>(
-                    builder: (_) => Column(
-                      children: [
-                        TSettingsMenuTile(icon: Iconsax.safe_home, title: AppStrings.myAddresses, subtitle: AppStrings.setShoppingDeliveryAddress),
-                        TSettingsMenuTile(icon: Iconsax.shopping_cart, title: AppStrings.myCart, subtitle: AppStrings.addRemoveProductsCheckout),
-                        TSettingsMenuTile(icon: Iconsax.bag_tick, title: AppStrings.myOrders, subtitle: AppStrings.inProgressCompletedOrders),
-                        TSettingsMenuTile(icon: Iconsax.bank, title: AppStrings.bankAccount, subtitle: AppStrings.withdrawBalanceBank),
-                        TSettingsMenuTile(icon: Iconsax.discount_shape, title: AppStrings.myCoupons, subtitle: AppStrings.listDiscountedCoupons),
-                        TSettingsMenuTile(icon: Iconsax.notification, title: AppStrings.notifications, subtitle: AppStrings.setNotificationMessages),
-                        TSettingsMenuTile(icon: Iconsax.security_card, title: AppStrings.accountPrivacy, subtitle: AppStrings.manageDataUsageAccounts),
-                      ],
-                    ),
-                  ),
 
-                  const SizedBox(height: TSizes.spaceBtwSections),
-                  GetBuilder<LanguageController>(
-                    builder: (_) => TSectionHeading(title: AppStrings.appSettings, showActionButton: false),
-                  ),
-                  const SizedBox(height: TSizes.spaceBtwItems),
+                  // Account-Einträge (ohne Aktionen, nur ListTiles)
                   GetBuilder<LanguageController>(
                     builder: (_) => Column(
                       children: [
-                        TSettingsMenuTile(icon: Iconsax.document_upload, title: AppStrings.loadData, subtitle: AppStrings.uploadDataCloudFirebase),
-                        TSettingsMenuTile(icon: Iconsax.location, title: AppStrings.geolocation, subtitle: AppStrings.setRecommendationLocation, trailing: Switch(value: true, onChanged: (value) {})),
-                        TSettingsMenuTile(icon: Iconsax.security_user, title: AppStrings.safeMode, subtitle: AppStrings.searchResultsSafeAllAges, trailing: Switch(value: false, onChanged: (value) {})),
-                        TSettingsMenuTile(icon: Iconsax.image, title: AppStrings.hdImageQuality, subtitle: AppStrings.setImageQualitySeen, trailing: Switch(value: false, onChanged: (value) {})),
                         TSettingsMenuTile(
-                          icon: Icons.dark_mode, 
-                          title: AppStrings.darkMode, 
-                          subtitle: AppStrings.switchLightDarkTheme, 
-                          trailing: Switch(
-                            value: Get.isDarkMode, 
-                            onChanged: (value) {
-                              Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
-                            }
-                          )
+                          icon: Iconsax.safe_home,
+                          title: AppStrings.myAddresses,
+                          subtitle: AppStrings.setShoppingDeliveryAddress,
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.shopping_cart,
+                          title: AppStrings.myCart,
+                          subtitle: AppStrings.addRemoveProductsCheckout,
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.bag_tick,
+                          title: AppStrings.myOrders,
+                          subtitle: AppStrings.inProgressCompletedOrders,
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.bank,
+                          title: AppStrings.bankAccount,
+                          subtitle: AppStrings.withdrawBalanceBank,
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.discount_shape,
+                          title: AppStrings.myCoupons,
+                          subtitle: AppStrings.listDiscountedCoupons,
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.notification,
+                          title: AppStrings.notifications,
+                          subtitle: AppStrings.setNotificationMessages,
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.security_card,
+                          title: AppStrings.accountPrivacy,
+                          subtitle: AppStrings.manageDataUsageAccounts,
                         ),
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: TSizes.spaceBtwSections),
+
+                  /* App-Einstellungen Überschrift */
+                  GetBuilder<LanguageController>(
+                    builder: (_) =>
+                        TSectionHeading(title: AppStrings.appSettings, showActionButton: false),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwItems),
+
+                  // App-bezogene Toggles (Geolocation, Safe Mode, Bildqualität, Dark Mode)
+                  GetBuilder<LanguageController>(
+                    builder: (_) => Column(
+                      children: [
+                        TSettingsMenuTile(
+                          icon: Iconsax.document_upload,
+                          title: AppStrings.loadData,
+                          subtitle: AppStrings.uploadDataCloudFirebase,
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.location,
+                          title: AppStrings.geolocation,
+                          subtitle: AppStrings.setRecommendationLocation,
+                          trailing: Switch(value: true, onChanged: (value) {}),
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.security_user,
+                          title: AppStrings.safeMode,
+                          subtitle: AppStrings.searchResultsSafeAllAges,
+                          trailing: Switch(value: false, onChanged: (value) {}),
+                        ),
+                        TSettingsMenuTile(
+                          icon: Iconsax.image,
+                          title: AppStrings.hdImageQuality,
+                          subtitle: AppStrings.setImageQualitySeen,
+                          trailing: Switch(value: false, onChanged: (value) {}),
+                        ),
+                        // Systemweites Theme umschalten über GetX
+                        TSettingsMenuTile(
+                          icon: Icons.dark_mode,
+                          title: AppStrings.darkMode,
+                          subtitle: AppStrings.switchLightDarkTheme,
+                          trailing: Switch(
+                            value: Get.isDarkMode,
+                            onChanged: (value) {
+                              Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Sprachumschalter (Deutsch <-> Englisch)
                   GetBuilder<LanguageController>(
                     builder: (controller) => TSettingsMenuTile(
-                      icon: Icons.language, 
-                      title: 'Deutsch', 
-                      subtitle: AppStrings.useGermanLanguage, 
+                      icon: Icons.language,
+                      title: 'Deutsch',
+                      subtitle: AppStrings.useGermanLanguage,
                       trailing: Switch(
-                        value: controller.isGerman.value, 
+                        value: controller.isGerman.value,
                         onChanged: (value) {
                           controller.toggleLanguage(value);
                           Get.snackbar('Sprache', value ? 'Deutsch aktiviert' : 'English activated');
-                        }
-                      )
+                        },
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: TSizes.spaceBtwSections),
+
+                  // Logout-Button (vollbreit)
                   SizedBox(
                     width: double.infinity,
                     child: GetBuilder<LanguageController>(
-                      builder: (_) => OutlinedButton(onPressed: () async => await AuthenticationRepository.instance.logout(), child: Text(AppStrings.logout)),
+                      builder: (_) => OutlinedButton(
+                        onPressed: () async =>
+                            await AuthenticationRepository.instance.logout(),
+                        child: Text(AppStrings.logout),
+                      ),
                     ),
                   ),
+
                   const SizedBox(height: TSizes.spaceBtwSections * 2.5),
                 ],
               ),
             )
           ],
-        )
-      )
+        ),
+      ),
     );
   }
 }
-
-

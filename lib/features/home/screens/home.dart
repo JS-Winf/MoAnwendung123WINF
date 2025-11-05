@@ -6,10 +6,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
-import '../../../utils/constants/app_strings.dart';
-import '../../../utils/constants/language_controller.dart';
-import '../../../data/repositories/authentication/authentication_repository.dart';
-import '../../cart/screens/cart.dart';
+import '../../../utils/constants/app_strings.dart'; // Lokalisierte String-Konstanten
+import '../../../utils/constants/language_controller.dart'; // GetX-Controller für Sprache
+import '../../../data/repositories/authentication/authentication_repository.dart'; // Auth0/Repo-Zugriff
+import '../../cart/screens/cart.dart'; // Warenkorb-Screen
 
 /// Stateless Widget für bessere Performance
 /// Implementiert Material Design Guidelines
@@ -18,29 +18,30 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Registriert/holt den LanguageController (für dynamische Texte)
     final languageController = Get.put(LanguageController());
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SingleChildScrollView( // Ermöglicht Scrollen durch den gesamten Inhalt
         child: Column(
           children: [
             // ========== HEADER BEREICH ==========
             /// Gradient Header mit App Bar, Suche und Freunde-Sektion
             Container(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: const LinearGradient( // Verlaufs-Hintergrund
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [Color(0xFF667eea), Color(0xFF764ba2)],
                 ),
                 boxShadow: [
-                  BoxShadow(
+                  BoxShadow( // Weicher Schatten unter dem Header
                     color: Colors.blue.shade200.withOpacity(0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: SafeArea(
+              child: SafeArea( // Vermeidet Notch/Statusbar-Überlappung
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -50,34 +51,38 @@ class HomeScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Linke Seite: Begrüßungstitel + dynamischer Name
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              GetBuilder<LanguageController>(
-                                builder: (_) => Text(AppStrings.goodDay, 
-                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70)
+                              GetBuilder<LanguageController>( // Reagiert auf Sprachwechsel
+                                builder: (_) => Text(
+                                  AppStrings.goodDay,
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70),
                                 ),
                               ),
-                              FutureBuilder<String>(
+                              FutureBuilder<String>( // Lädt asynchron den (Vor-)Namen
                                 future: _getUserName(),
                                 builder: (context, snapshot) {
                                   final name = snapshot.data ?? 'Guest';
                                   return GetBuilder<LanguageController>(
-                                    builder: (_) => Text('${AppStrings.hello} $name', 
-                                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white)
+                                    builder: (_) => Text(
+                                      '${AppStrings.hello} $name',
+                                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white),
                                     ),
                                   );
                                 },
                               ),
                             ],
                           ),
+                          // Rechte Seite: Warenkorb-Icon mit Badge
                           Stack(
                             children: [
                               IconButton(
                                 icon: const Icon(Iconsax.shopping_bag, color: Colors.white),
-                                onPressed: () => Get.to(() => const CartScreen()),
+                                onPressed: () => Get.to(() => const CartScreen()), // Navigation zum Cart
                               ),
-                              Positioned(
+                              Positioned( // Roter Badge oben rechts
                                 right: 0,
                                 top: 0,
                                 child: Container(
@@ -112,10 +117,13 @@ class HomeScreen extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            Icon(Iconsax.search_normal, color: Colors.grey),
+                            Icon(Iconsax.search_normal, color: Colors.grey), // Lupe-Icon
                             SizedBox(width: 8),
                             GetBuilder<LanguageController>(
-                              builder: (_) => Text(AppStrings.searchInStore, style: TextStyle(color: Colors.grey)),
+                              builder: (_) => Text(
+                                AppStrings.searchInStore, // Platzhaltertext
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ),
                           ],
                         ),
@@ -130,8 +138,9 @@ class HomeScreen extends StatelessWidget {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: GetBuilder<LanguageController>(
-                              builder: (_) => Text(AppStrings.yourFriends, 
-                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)
+                              builder: (_) => Text(
+                                AppStrings.yourFriends,
+                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -139,9 +148,10 @@ class HomeScreen extends StatelessWidget {
                           SizedBox(
                             height: 70,
                             child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
+                              scrollDirection: Axis.horizontal, // Horizontal scrollbarer Avatarstreifen
                               itemCount: 5,
                               itemBuilder: (context, index) {
+                                // Lokale Demo-Avatar-Liste
                                 final avatars = [
                                   'assets/images/content/user.png',
                                   'assets/images/reviews/review_profile_image_1.jpg',
@@ -153,6 +163,7 @@ class HomeScreen extends StatelessWidget {
                                   margin: const EdgeInsets.only(right: 12),
                                   child: Column(
                                     children: [
+                                      // Kreis-Avatar mit weißem Rand & Schatten
                                       Container(
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
@@ -170,15 +181,22 @@ class HomeScreen extends StatelessWidget {
                                           backgroundColor: Colors.white,
                                           backgroundImage: AssetImage(avatars[index]),
                                           onBackgroundImageError: (exception, stackTrace) {},
+                                          // Fallback-Initialen, falls Bild fehlt
                                           child: Image.asset(
                                             avatars[index],
-                                            errorBuilder: (context, error, stackTrace) => Text('F${index + 1}', style: const TextStyle(color: Color(0xFF764ba2), fontWeight: FontWeight.bold)),
+                                            errorBuilder: (context, error, stackTrace) => Text(
+                                              'F${index + 1}',
+                                              style: const TextStyle(color: Color(0xFF764ba2), fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       GetBuilder<LanguageController>(
-                                        builder: (_) => Text(AppStrings.friend, style: TextStyle(color: Colors.white70, fontSize: 10)),
+                                        builder: (_) => Text(
+                                          AppStrings.friend,
+                                          style: TextStyle(color: Colors.white70, fontSize: 10),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -195,7 +213,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             
-            // Body Content
+            // Body Content (unterhalb des Headers)
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -204,7 +222,7 @@ class HomeScreen extends StatelessWidget {
                   /// Promo-Banner Slider für Angebote und Werbung
                   SizedBox(
                     height: 200,
-                    child: PageView.builder(
+                    child: PageView.builder( // Einfache PageView-Variante (kein Indikator)
                       itemCount: 3,
                       itemBuilder: (context, index) {
                         final banners = [
@@ -232,6 +250,7 @@ class HomeScreen extends StatelessWidget {
                               width: double.infinity,
                               height: double.infinity,
                               fit: BoxFit.cover,
+                              // Fallback: farbiger Gradient mit Platzhaltertext
                               errorBuilder: (context, error, stackTrace) => Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -250,8 +269,9 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 child: Center(
                                   child: GetBuilder<LanguageController>(
-                                    builder: (_) => Text('${AppStrings.promoBanner} ${index + 1}', 
-                                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)
+                                    builder: (_) => Text(
+                                      '${AppStrings.promoBanner} ${index + 1}',
+                                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ),
@@ -270,18 +290,21 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GetBuilder<LanguageController>(
-                        builder: (_) => Text(AppStrings.popularProducts, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        builder: (_) => Text(
+                          AppStrings.popularProducts,
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   
-                  // Products Grid
+                  // Products Grid (4 Beispiel-Items)
                   GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true, // Grid in Column einbetten
+                    physics: const NeverScrollableScrollPhysics(), // Scroll übernimmt der übergeordnete ListView
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                      crossAxisCount: 2, // 2 Spalten
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       childAspectRatio: 0.8,
@@ -316,6 +339,7 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Oberer Bildbereich mit Wunschlisten-Icon
                             Expanded(
                               flex: 3,
                               child: Container(
@@ -325,6 +349,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 child: Stack(
                                   children: [
+                                    // Produktbild mit Fallback
                                     ClipRRect(
                                       borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                                       child: Image.asset(
@@ -337,6 +362,7 @@ class HomeScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
+                                    // Kleines Herz-Icon oben rechts
                                     Positioned(
                                       top: 8,
                                       right: 8,
@@ -353,6 +379,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            // Unterer Text-/Preis-/Buttonbereich
                             Expanded(
                               flex: 2,
                               child: Padding(
@@ -360,19 +387,24 @@ class HomeScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(product['name']!, 
-                                      style: const TextStyle(fontWeight: FontWeight.bold)
+                                    Text(
+                                      product['name']!,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                    Text(product['brand']!, 
-                                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12)
+                                    Text(
+                                      product['brand']!,
+                                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                                     ),
                                     const Spacer(),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('\$${product['price']}', 
-                                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF764ba2))
+                                        // Preis (hervorgehoben)
+                                        Text(
+                                          '\$${product['price']}',
+                                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF764ba2)),
                                         ),
+                                        // Mini-Warenkorb-Button (ohne Funktion)
                                         Container(
                                           padding: const EdgeInsets.all(4),
                                           decoration: const BoxDecoration(
@@ -401,24 +433,25 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // Liefert eine hübsch aufbereitete Benutzer-Anzeige (Vorname/Nickname/aus E-Mail extrahiert).
   Future<String> _getUserName() async {
     try {
       final authRepo = AuthenticationRepository.instance;
       final user = await authRepo.currentUser();
       
       if (user != null) {
-        // Try name first
+        // 1) Bevorzugt: Vollständiger Name (ohne E-Mail-Anteil)
         if (user.name != null && user.name!.isNotEmpty && !user.name!.contains('@')) {
           final firstName = user.name!.split(' ').first;
           return firstName;
         }
         
-        // Try nickname
+        // 2) Fallback: Nickname (sofern nicht wie eine E-Mail)
         if (user.nickname != null && user.nickname!.isNotEmpty && !user.nickname!.contains('@')) {
           return user.nickname!;
         }
         
-        // Extract name from email
+        // 3) Fallback: Name aus E-Mail extrahieren (Ziffern/Sonderzeichen entfernen)
         if (user.email != null && user.email!.isNotEmpty) {
           final emailPart = user.email!.split('@').first;
           final cleanName = emailPart.replaceAll(RegExp(r'[0-9._-]'), '');
@@ -428,7 +461,7 @@ class HomeScreen extends StatelessWidget {
         }
       }
       
-      // Fallback for demo user
+      // Demo-User-Fallback (z. B. für Demo-Modus)
       final storage = authRepo.deviceStorage;
       if (storage.read('demoUser') == true) {
         return 'Demo User';
@@ -436,6 +469,7 @@ class HomeScreen extends StatelessWidget {
       
       return 'Guest';
     } catch (e) {
+      // Fehler → generischer Fallback
       return 'Guest';
     }
   }

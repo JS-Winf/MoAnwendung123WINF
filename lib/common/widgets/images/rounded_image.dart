@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/constants/sizes.dart';
 
+/// Abgerundetes Bild-Widget mit optionalem Rahmen, Hintergrund, Padding
+/// und Tap-Callback. Unterstützt Asset- und Netzwerkbilder.
 class TRoundedImage extends StatelessWidget {
   const TRoundedImage({
     super.key,
-    this.border,
-    this.padding,
-    this.onPressed,
-    this.width,
-    this.height,
-    this.applyImageRadius = true,
-    required this.imageUrl,
-    this.fit = BoxFit.contain,
-    this.backgroundColor,
-    this.isNetworkImage = false,
-    this.borderRadius = TSizes.md,
+    this.border,                         // Optionaler Rahmen ums Bild
+    this.padding,                        // Innenabstand des äußeren Containers
+    this.onPressed,                      // Tap-Handler (GestureDetector)
+    this.width,                          // Breite des Containers
+    this.height,                         // Höhe des Containers
+    this.applyImageRadius = true,        // Rundung auch auf das Bild selbst anwenden
+    required this.imageUrl,              // Quelle: Asset-Pfad oder URL
+    this.fit = BoxFit.contain,           // Bild-Skalierung
+    this.backgroundColor,                // Hintergrundfarbe hinter dem Bild
+    this.isNetworkImage = false,         // true: NetworkImage, false: AssetImage
+    this.borderRadius = TSizes.md,       // Eckenradius des Containers/Bilds
   });
 
   final double? width, height;
@@ -32,24 +34,29 @@ class TRoundedImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: onPressed, // Gesamtes Widget ist klickbar.
       child: Container(
         width: width,
         height: height,
         padding: padding,
         decoration: BoxDecoration(
-            border: border,
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(borderRadius)),
+          border: border,                                // Optionaler Rahmen
+          color: backgroundColor,                        // Optionaler Hintergrund
+          borderRadius: BorderRadius.circular(borderRadius), // Abgerundete Ecken
+        ),
+        // Clippt den Bildinhalt optional ebenfalls auf die gleiche Rundung,
+        // damit das Bild die abgerundeten Ecken respektiert.
         child: ClipRRect(
-            borderRadius: applyImageRadius
-                ? BorderRadius.circular(borderRadius)
-                : BorderRadius.zero,
-            child: Image(
-                fit: fit,
-                image: isNetworkImage
-                    ? NetworkImage(imageUrl)
-                    : AssetImage(imageUrl))),
+          borderRadius: applyImageRadius
+              ? BorderRadius.circular(borderRadius)
+              : BorderRadius.zero,
+          child: Image(
+            fit: fit,
+            image: isNetworkImage
+                ? NetworkImage(imageUrl)                 // Bild aus dem Netz
+                : AssetImage(imageUrl) as ImageProvider, // Bild aus Assets
+          ),
+        ),
       ),
     );
   }

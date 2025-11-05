@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../../../utils/constants/colors.dart';
 
+/// Runder/kreisförmiger Container mit optionalem Inhalt.
+/// Eignet sich für runde Badges, Avatare, dekorative Kreise etc.
 class TCircularContainer extends StatelessWidget {
   const TCircularContainer({
     super.key,
     this.child,
-    this.width = 400,
-    this.height = 400,
-    this.radius = 400,
+    this.width = 400,                 // Standardbreite
+    this.height = 400,                // Standardhöhe
+    this.radius = 400,                // Großer Radius → Kreis/Rundung
     this.margin,
-    this.padding = 0,
-    this.backgroundColor = TColors.white,
+    this.padding = 0,                 // Innenabstand
+    this.backgroundColor = TColors.white, // Standard: weißer Hintergrund
   });
 
   final double? width;
@@ -22,19 +24,18 @@ class TCircularContainer extends StatelessWidget {
   final Widget? child;
   final Color backgroundColor;
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
-      margin: margin,
-      padding: EdgeInsets.all(padding),
+      width: width,                        // Breite des Containers
+      height: height,                      // Höhe des Containers
+      margin: margin,                      // Außenabstand
+      padding: EdgeInsets.all(padding),    // Innenabstand (gleichmäßig)
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
-        color: backgroundColor,
+        borderRadius: BorderRadius.circular(radius), // Rundung/Kreisform
+        color: backgroundColor,            // Hintergrundfarbe
       ),
-      child: child,
+      child: child,                        // Optionaler Inhalt
     );
   }
 }

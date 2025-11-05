@@ -7,25 +7,38 @@ import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/popups/loaders.dart';
 
+/// Controller zur E-Mail-Verifizierung.
+/// - Versendet (optional) Verifizierungs-E-Mails
+/// - Pollt/verfolgt den Verifizierungsstatus
+/// - Leitet nach erfolgreicher Verifizierung auf eine Success-Seite weiter
 class VerifyEmailController extends GetxController {
+  /// Singleton-Zugriff über GetX
   static VerifyEmailController get instance => Get.find();
 
   @override
   void onInit() {
     super.onInit();
+    // Beim Initialisieren sofort Auto-Redirect-Timer starten
     setTimerForAutoRedirect();
   }
 
-  /// Send email verification link
+  /// Verifizierungs-E-Mail senden (Delegation an das Repository).
+  /// Zeigt passende Snackbars für Erfolg/Fehler.
   sendEmailVerification() async {
     try {
       await AuthenticationRepository.instance.sendEmailVerification();
-      TLoaders.successSnackbar(title: 'Email sent', message: 'Please Check your inbox and verify your email.');
+      TLoaders.successSnackbar(
+        title: 'Email sent',
+        message: 'Please Check your inbox and verify your email.',
+      );
     } catch (e) {
       TLoaders.errorSnackbar(title: 'Oh Snap!', message: e.toString());
     }
   }
 
+  /// Setzt einen periodischen Timer (alle 10s), der prüft,
+  /// ob die E-Mail des Users verifiziert wurde.
+  /// Bei Erfolg: Timer stoppen & SuccessScreen anzeigen.
   setTimerForAutoRedirect() {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       final currentUser =
@@ -43,15 +56,22 @@ class VerifyEmailController extends GetxController {
     });
   }
 
+  /// Manuelle Prüfung des Verifizierungsstatus (z. B. via Button).
+  /// - Zeigt "Checking..." Hinweis
+  /// - Leert den User-Cache, wartet kurz und lädt frische Profildaten
+  /// - Bei verifiziert → SuccessScreen, sonst Fehlermeldung
   Future<void> checkEmailVerificationStatus() async {
     try {
-      TLoaders.warningSnackbar(title: 'Checking...', message: 'Verifying your email status');
+      TLoaders.warningSnackbar(
+        title: 'Checking...',
+        message: 'Verifying your email status',
+      );
       
-      // Clear cache to force fresh data
+      // Cache leeren, um frische Daten zu erzwingen
       final authRepo = AuthenticationRepository.instance;
       authRepo.clearUserCache();
       
-      // Wait a moment for Auth0 to update
+      // Kurz warten, damit der Verifizierungsstatus bei Auth0 aktualisiert ist
       await Future.delayed(const Duration(seconds: 2));
       
       final currentUser = await authRepo.currentUser();
@@ -69,7 +89,11 @@ class VerifyEmailController extends GetxController {
         );
       }
     } catch (e) {
-      TLoaders.errorSnackbar(title: 'Error', message: 'Please try again or use the X button to login manually.');
+      // Allgemeiner Fehlerfall mit Handlungsempfehlung
+      TLoaders.errorSnackbar(
+        title: 'Error',
+        message: 'Please try again or use the X button to login manually.',
+      );
     }
   }
 }

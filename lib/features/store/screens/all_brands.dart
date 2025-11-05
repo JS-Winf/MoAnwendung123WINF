@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
-import '../../../utils/constants/app_strings.dart';
-import '../../../utils/constants/language_controller.dart';
+import '../../../utils/constants/app_strings.dart'; // Lokalisierte/konstante Strings (Titel, Labels)
+import '../../../utils/constants/language_controller.dart'; // GetX-Controller für Sprache/Übersetzungen
 
 class AllBrandsScreen extends StatelessWidget {
   const AllBrandsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Beispielhafte Brand-Daten (normalerweise aus Repository/API)
     final brands = [
       {'name': 'Nike', 'products': 120, 'icon': 'assets/icons/brands/nike.png'},
       {'name': 'Adidas', 'products': 95, 'icon': 'assets/icons/brands/adidas-logo.png'},
@@ -22,17 +23,20 @@ class AllBrandsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        // Titel reagiert auf Sprachwechsel
         title: GetBuilder<LanguageController>(
           builder: (_) => Text(AppStrings.allBrands),
         ),
+        // Zurück-Pfeil (Pop der aktuellen Route)
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0), // Außenabstand für den Gridbereich
         child: GridView.builder(
+          // 2 Spalten, gleichmäßige Abstände, feste Kartenhöhe (mainAxisExtent)
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 16,
@@ -58,6 +62,7 @@ class AllBrandsScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
+                  // Kreisförmiger Icon-Container mit hellem Markenakzent
                   Container(
                     width: 50,
                     height: 50,
@@ -70,12 +75,14 @@ class AllBrandsScreen extends StatelessWidget {
                       child: Image.asset(
                         brand['icon'] as String,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => 
+                        // Fallback-Icon, wenn Asset nicht geladen werden kann
+                        errorBuilder: (context, error, stackTrace) =>
                           const Icon(Iconsax.shop, color: Color(0xFF764ba2)),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
+                  // Markenname + Produktanzahl (links ausgerichtet, vertikal zentriert)
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

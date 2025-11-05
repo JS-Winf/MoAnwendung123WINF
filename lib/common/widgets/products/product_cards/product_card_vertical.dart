@@ -13,104 +13,126 @@ import '../../icons/circular_icon.dart';
 import '../../texts/brand_title_text_with_verified_icon.dart';
 import '../../texts/product_price_text.dart';
 
+/// Vertikale Produktkarte:
+/// - Oben: Bildbereich mit Rabatt-Badge & Favoriten-Icon
+/// - Mitte: Titel + Brand (mit Verified-Icon)
+/// - Unten: Preis + "Add to Cart"-Button
 class TProductCardVertical extends StatelessWidget {
   const TProductCardVertical({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Theme (Dark/Light) zur dynamischen Farbwahl
     final dark = THelperFunctions.isDarkMode(context);
 
     return GestureDetector(
-      onTap: () {},
+      onTap: () {}, // Tap auf die Karte (Navigation/Details möglich)
       child: Container(
-        width: 180,
-        padding: const EdgeInsets.all(1),
+        width: 180,                                   // Fixe Kartenbreite
+        padding: const EdgeInsets.all(1),            // Dünner Außenabstand
         decoration: BoxDecoration(
-          boxShadow: [TShadowStyle.verticalProductShadow],
-          borderRadius: BorderRadius.circular(TSizes.productImageRadius),
-          color: dark ? TColors.darkerGrey : TColors.white,
+          boxShadow: [TShadowStyle.verticalProductShadow],              // Schattenstil
+          borderRadius: BorderRadius.circular(TSizes.productImageRadius), // Abgerundete Ecken
+          color: dark ? TColors.darkerGrey : TColors.white,             // Kartenhintergrund
         ),
         child: Column(
           children: [
             /* Thumbnail, Wishlist Button, Discount Tag */
             TRoundedContainer(
-              height: 180,
+              height: 180,                                           // Bildbereich-Höhe
               padding: const EdgeInsets.all(TSizes.sm),
-              backgroundColor: dark ? TColors.dark : TColors.light,
+              backgroundColor: dark ? TColors.dark : TColors.light,  // Kontrast zum Kartenhintergrund
               child: Stack(
                 children: [
                   /* Thumbnail image */
                   const TRoundedImage(
-                      imageUrl: TImages.productImage1, applyImageRadius: true),
+                    imageUrl: TImages.productImage1,
+                    applyImageRadius: true,                           // Bild folgt Rundung
+                  ),
 
-                  /* Sale Tag */
+                  /* Sale Tag (Rabatt-Badge) */
                   Positioned(
                     top: 12,
                     child: TRoundedContainer(
                       radius: TSizes.sm,
                       backgroundColor: TColors.secondary.withOpacity(0.8),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: TSizes.sm, vertical: TSizes.xs),
-                      child: Text('25%',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge!
-                              .apply(color: TColors.black)),
+                        horizontal: TSizes.sm,
+                        vertical: TSizes.xs,
+                      ),
+                      child: Text(
+                        '25%',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .apply(color: TColors.black),
+                      ),
                     ),
                   ),
 
-                  /* Favourite Icon */
+                  /* Favourite Icon (Herz oben rechts) */
                   const Positioned(
-                      top: 0,
-                      right: 0,
-                      child: TCircularIcon(
-                          icon: Iconsax.heart5, color: Colors.red)),
+                    top: 0,
+                    right: 0,
+                    child: TCircularIcon(
+                      icon: Iconsax.heart5,
+                      color: Colors.red,
+                    ),
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: TSizes.spaceBtwItems / 2),
 
-            /* Details */
+            /* Details: Titel & Marke */
             const Padding(
               padding: EdgeInsets.only(left: TSizes.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TProductTitleText(
-                      title: 'Green Nike Air Shoes', smallSize: true),
+                    title: 'Green Nike Air Shoes',
+                    smallSize: true,
+                  ),
                   SizedBox(height: TSizes.spaceBtwItems / 2),
                   TBrandTitleWithVerifiedIcon(title: 'Nike'),
                 ],
               ),
             ),
 
+            const Spacer(), // Schiebt Preis/CTA nach unten
 
-            const Spacer(),
-            /* Price */
+            /* Price & Add-to-Cart */
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Padding(
                   padding: EdgeInsets.only(left: TSizes.sm),
-                  child: TProductPriceText(price: '35.5', isLarge: true),
+                  child: TProductPriceText(
+                    price: '35.5',
+                    isLarge: true, // Größere Preisdarstellung
+                  ),
                 ),
 
-                /* Add to Cart Button */
+                /* Add to Cart Button (rechte Ecke, abgerundet) */
                 Container(
                   decoration: const BoxDecoration(
                     color: TColors.dark,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(TSizes.cardRadiusMd),
-                      bottomRight:
-                      Radius.circular(TSizes.productImageRadius),
+                      bottomRight: Radius.circular(TSizes.productImageRadius),
                     ),
                   ),
                   child: const SizedBox(
-                      width: TSizes.iconLg * 1.2,
-                      height: TSizes.iconLg * 1.2,
-                      child: Center(
-                          child:
-                          Icon(Iconsax.add, color: TColors.white))),
+                    width: TSizes.iconLg * 1.2,
+                    height: TSizes.iconLg * 1.2,
+                    child: Center(
+                      child: Icon(
+                        Iconsax.add,
+                        color: TColors.white,
+                      ),
+                    ),
+                  ),
                 )
               ],
             ),
@@ -120,5 +142,3 @@ class TProductCardVertical extends StatelessWidget {
     );
   }
 }
-
-

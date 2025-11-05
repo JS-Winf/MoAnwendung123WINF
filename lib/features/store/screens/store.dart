@@ -1,47 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:get/get.dart';
-import '../../../utils/constants/app_strings.dart';
-import '../../../utils/constants/language_controller.dart';
-import 'all_brands.dart';
-import '../../cart/screens/cart.dart';
+import '../../../utils/constants/app_strings.dart'; // Lokalisierte/konstante Strings
+import '../../../utils/constants/language_controller.dart'; // GetX-Controller für Sprache
+import 'all_brands.dart'; // Screen mit allen Marken
+import '../../cart/screens/cart.dart'; // Warenkorb-Screen
 
 class StoreScreen extends StatelessWidget {
   const StoreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Stellt sicher, dass der LanguageController vorhanden ist (für dynamische Texte)
     final languageController = Get.put(LanguageController());
+
     return DefaultTabController(
-      length: 5,
+      length: 5, // Anzahl der Tabs
       child: Scaffold(
         appBar: AppBar(
+          // Titel reagiert auf Sprachwechsel
           title: GetBuilder<LanguageController>(
-            builder: (_) => Text(AppStrings.store, style: Theme.of(context).textTheme.headlineMedium),
+            builder: (_) => Text(
+              AppStrings.store,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
           ),
           actions: [
+            // Warenkorb-Icon: Navigiert zum CartScreen
             IconButton(
               onPressed: () => Get.to(() => const CartScreen()),
-              icon: const Icon(Iconsax.shopping_bag)
+              icon: const Icon(Iconsax.shopping_bag),
             ),
           ],
         ),
         body: NestedScrollView(
+          // SliverAppBar + TabBar oben, darunter Tab-Inhalte
           headerSliverBuilder: (_, innerBoxIsScrolled) {
             return [
               SliverAppBar(
                 automaticallyImplyLeading: false,
-                pinned: true,
-                floating: true,
-                expandedHeight: 440,
+                pinned: true,   // TabBar bleibt oben kleben
+                floating: true, // erscheint beim Scrollen nach oben
+                expandedHeight: 440, // Höhe des flexiblen Bereichs
                 flexibleSpace: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ListView(
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(), // Scroll übernimmt der Parent
                     children: [
                       const SizedBox(height: 16),
-                      // Search bar
+
+                      // Suchleiste
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
@@ -53,29 +62,37 @@ class StoreScreen extends StatelessWidget {
                             Icon(Iconsax.search_normal, color: Colors.grey),
                             SizedBox(width: 8),
                             GetBuilder<LanguageController>(
-                              builder: (_) => Text(AppStrings.searchInStore, style: TextStyle(color: Colors.grey)),
+                              builder: (_) => Text(
+                                AppStrings.searchInStore,
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 32),
-                      
-                      // Featured brands section
+
+                      // „Featured Brands“-Bereich mit Link zu „Alle Marken“
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GetBuilder<LanguageController>(
-                            builder: (_) => Text(AppStrings.featuredBrands, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            builder: (_) => Text(
+                              AppStrings.featuredBrands,
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
                           ),
                           GetBuilder<LanguageController>(
                             builder: (_) => TextButton(
                               onPressed: () => Get.to(() => const AllBrandsScreen()),
-                              child: Text(AppStrings.viewAll)
+                              child: Text(AppStrings.viewAll),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
+
+                      // Kleines Grid mit 4 hervorgehobenen Marken
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -83,10 +100,11 @@ class StoreScreen extends StatelessWidget {
                           crossAxisCount: 2,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
-                          mainAxisExtent: 80,
+                          mainAxisExtent: 80, // fixe Kachelhöhe
                         ),
                         itemCount: 4,
                         itemBuilder: (context, index) {
+                          // Demo-Daten
                           final brands = [
                             {'name': 'Nike', 'products': 120, 'icon': 'assets/icons/brands/nike.png'},
                             {'name': 'Adidas', 'products': 95, 'icon': 'assets/icons/brands/adidas-logo.png'},
@@ -94,7 +112,7 @@ class StoreScreen extends StatelessWidget {
                             {'name': 'Puma', 'products': 75, 'icon': 'assets/icons/brands/puma-logo.png'},
                           ];
                           final brand = brands[index];
-                          
+
                           return Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
@@ -103,6 +121,7 @@ class StoreScreen extends StatelessWidget {
                             ),
                             child: Row(
                               children: [
+                                // Marken-Icon im runden Container
                                 Container(
                                   width: 40,
                                   height: 40,
@@ -115,12 +134,14 @@ class StoreScreen extends StatelessWidget {
                                     child: Image.asset(
                                       brand['icon'] as String,
                                       fit: BoxFit.contain,
-                                      errorBuilder: (context, error, stackTrace) => 
+                                      // Fallback-Icon, falls Asset fehlt
+                                      errorBuilder: (context, error, stackTrace) =>
                                         const Icon(Iconsax.shop, color: Color(0xFF764ba2)),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
+                                // Markenname + Produktanzahl
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,10 +164,11 @@ class StoreScreen extends StatelessWidget {
                             ),
                           );
                         },
-                      )
+                      ),
                     ],
                   ),
                 ),
+                // Obere TabBar (scrollbar wegen vieler Tabs)
                 bottom: TabBar(
                   isScrollable: true,
                   tabs: [
@@ -157,9 +179,10 @@ class StoreScreen extends StatelessWidget {
                     Tab(child: GetBuilder<LanguageController>(builder: (_) => Text(AppStrings.cosmetics))),
                   ],
                 ),
-              )
+              ),
             ];
           },
+          // Inhalt der einzelnen Tabs
           body: GetBuilder<LanguageController>(
             builder: (_) => TabBarView(
               children: [
@@ -176,26 +199,34 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
+  // Baut den Inhalt für eine Kategorie-Registerkarte
   Widget _buildCategoryTab(String category) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Überschrift „<Kategorie> Products“
           GetBuilder<LanguageController>(
-            builder: (_) => Text('$category ${AppStrings.products}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            builder: (_) => Text(
+              '$category ${AppStrings.products}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(height: 16),
+
+          // Produkt-Grid pro Kategorie (Dummy-Daten)
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 2, // zwei Spalten
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: 0.65,
+                childAspectRatio: 0.65, // Kartenproportionen
               ),
               itemCount: 6,
               itemBuilder: (context, index) {
+                // Map mit lokalisierungsabhängigen Demo-Items je Kategorie
                 final categoryData = {
                   'Sports': [
                     {'image': 'assets/images/products/NikeAirMax.png', 'name': 'Nike Air Max'},
@@ -240,11 +271,14 @@ class StoreScreen extends StatelessWidget {
                   'Cosmetics': [],
                   'Kosmetik': [],
                 };
+
+                // Hole Produkte für die aktuelle Kategorie (oder leere Liste)
                 final products = categoryData[category] ?? [];
+                // Falls weniger als 6 Items: fülle mit Platzhalterkarten
                 final product = index < products.length ? products[index] : null;
                 final imagePath = product?['image'];
                 final productName = product?['name'] ?? '$category Item ${index + 1}';
-                
+
                 return Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -260,6 +294,7 @@ class StoreScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Bild-/Iconbereich oben
                       Expanded(
                         flex: 3,
                         child: Container(
@@ -271,6 +306,7 @@ class StoreScreen extends StatelessWidget {
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
                             child: Stack(
                               children: [
+                                // Lade Asset-Bild oder zeige ein Kategorie-Icon als Fallback
                                 imagePath != null
                                     ? Image.asset(
                                         imagePath,
@@ -278,12 +314,21 @@ class StoreScreen extends StatelessWidget {
                                         height: double.infinity,
                                         fit: BoxFit.cover,
                                         errorBuilder: (context, error, stackTrace) => Center(
-                                          child: Icon(_getCategoryIcon(category), size: 40, color: Color(0xFF764ba2)),
+                                          child: Icon(
+                                            _getCategoryIcon(category),
+                                            size: 40,
+                                            color: Color(0xFF764ba2),
+                                          ),
                                         ),
                                       )
                                     : Center(
-                                        child: Icon(_getCategoryIcon(category), size: 40, color: Color(0xFF764ba2)),
+                                        child: Icon(
+                                          _getCategoryIcon(category),
+                                          size: 40,
+                                          color: Color(0xFF764ba2),
+                                        ),
                                       ),
+                                // Wunschlisten-Icon oben rechts
                                 Positioned(
                                   top: 8,
                                   right: 8,
@@ -301,6 +346,7 @@ class StoreScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      // Text/Preis/CTA unten
                       Expanded(
                         flex: 2,
                         child: Padding(
@@ -308,21 +354,32 @@ class StoreScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(productName, 
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)
+                              // Produktname (oder Platzhalter)
+                              Text(
+                                productName,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                               ),
+                              // Brand-Text (lokalisiert)
                               GetBuilder<LanguageController>(
-                                builder: (_) => Text(AppStrings.brandName, 
-                                  style: TextStyle(color: Colors.grey.shade600, fontSize: 10)
+                                builder: (_) => Text(
+                                  AppStrings.brandName,
+                                  style: TextStyle(color: Colors.grey.shade600, fontSize: 10),
                                 ),
                               ),
                               const Spacer(),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('\$${(index + 1) * 25}.99', 
-                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF764ba2), fontSize: 12)
+                                  // Demo-Preis abhängig vom Index
+                                  Text(
+                                    '\$${(index + 1) * 25}.99',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF764ba2),
+                                      fontSize: 12,
+                                    ),
                                   ),
+                                  // Mini-„in den Warenkorb“-Button (ohne Funktion)
                                   Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: const BoxDecoration(
@@ -348,19 +405,26 @@ class StoreScreen extends StatelessWidget {
     );
   }
 
+  // Wählt ein Icon passend zur Kategorie (inkl. deutscher Übersetzungen)
   IconData _getCategoryIcon(String category) {
     switch (category) {
       case 'Sports':
-      case 'Sport': return Iconsax.activity;
+      case 'Sport':
+        return Iconsax.activity;
       case 'Furniture':
-      case 'Möbel': return Iconsax.home;
+      case 'Möbel':
+        return Iconsax.home;
       case 'Electronics':
-      case 'Elektronik': return Iconsax.mobile;
+      case 'Elektronik':
+        return Iconsax.mobile;
       case 'Clothes':
-      case 'Kleidung': return Iconsax.user;
+      case 'Kleidung':
+        return Iconsax.user;
       case 'Cosmetics':
-      case 'Kosmetik': return Iconsax.heart;
-      default: return Iconsax.shop;
+      case 'Kosmetik':
+        return Iconsax.heart;
+      default:
+        return Iconsax.shop;
     }
   }
 }

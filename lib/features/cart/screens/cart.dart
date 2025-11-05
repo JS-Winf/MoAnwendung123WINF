@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:get/get.dart';
-import '../../../utils/constants/app_strings.dart';
-import '../../../utils/constants/language_controller.dart';
+import 'package:flutter/material.dart'; // Material-Widgets und -Themes
+import 'package:iconsax/iconsax.dart'; // Iconsax-Iconset (Fallback-Icon für Bilder)
+import 'package:get/get.dart'; // GetX (Navigation & State-Management)
+import '../../../utils/constants/app_strings.dart'; // Lokalisierte String-Konstanten (z. B. "My Cart")
+import '../../../utils/constants/language_controller.dart'; // Controller für Sprach-/Lokalisierungswechsel
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Beispielhafte Warenkorb-Daten (lokal im Widget; in echt kämen diese aus einem State/Repository)
     final cartItems = [
       {'name': 'Nike Air Max', 'brand': 'Nike', 'price': '129.99', 'quantity': 1, 'image': 'assets/images/products/NikeAirMax.png'},
       {'name': 'iPhone 14 Pro', 'brand': 'Apple', 'price': '999.99', 'quantity': 1, 'image': 'assets/images/products/iphone_14_pro.png'},
@@ -17,9 +18,11 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        // Titel reagiert auf Sprachwechsel via GetBuilder<LanguageController>
         title: GetBuilder<LanguageController>(
           builder: (_) => Text(AppStrings.myCart),
         ),
+        // Zurück-Navigation
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
@@ -27,6 +30,7 @@ class CartScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          // Scrollbare Liste der Cart-Items
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -49,6 +53,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
+                      // Produktbild mit abgerundeten Ecken + Fallback-Icon
                       Container(
                         width: 80,
                         height: 80,
@@ -61,25 +66,30 @@ class CartScreen extends StatelessWidget {
                           child: Image.asset(
                             item['image']! as String,
                             fit: BoxFit.cover,
+                            // Falls Bild fehlt/fehlschlägt → Einkaufstaschen-Icon
                             errorBuilder: (context, error, stackTrace) => 
                               const Icon(Iconsax.shopping_bag, color: Colors.grey),
                           ),
                         ),
                       ),
                       const SizedBox(width: 12),
+                      // Produktdetails (Name, Marke, Preis, Menge)
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Produktname
                             Text(
                               item['name']! as String,
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
+                            // Marke/Brand (dezenter)
                             Text(
                               item['brand']! as String,
                               style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                             ),
                             const SizedBox(height: 8),
+                            // Preis (farblich hervorgehoben) + Menge rechts
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -102,6 +112,7 @@ class CartScreen extends StatelessWidget {
               },
             ),
           ),
+          // Fußbereich mit Gesamtsumme und Checkout-Button
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -116,14 +127,15 @@ class CartScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
+                // Gesamtsumme (hier statisch; in echt berechnet aus cartItems)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
+                  children: const [
+                    Text(
                       'Total:',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    const Text(
+                    Text(
                       '\$1,309.96',
                       style: TextStyle(
                         fontSize: 18,
@@ -134,10 +146,11 @@ class CartScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
+                // Checkout-Button (volle Breite)
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {}, // TODO: Checkout-Flow starten
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF764ba2),
                       padding: const EdgeInsets.symmetric(vertical: 16),

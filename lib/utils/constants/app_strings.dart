@@ -2,12 +2,17 @@ import 'package:get/get.dart';
 import 'language_controller.dart';
 
 class AppStrings {
+  // Fallback-Flag, falls kein LanguageController verfügbar ist
   static bool _isGerman = false;
   
+  // Manuelles Setzen der Sprache (nur als Fallback gedacht)
   static void setGerman(bool german) {
     _isGerman = german;
   }
   
+  // Ermittelt, ob Deutsch aktiv ist:
+  // 1) versucht den LanguageController (reaktiv)
+  // 2) fällt zurück auf das lokale _isGerman-Flag
   static bool get isGerman {
     try {
       return Get.find<LanguageController>().isGerman.value;
@@ -16,7 +21,8 @@ class AppStrings {
     }
   }
   
-  static String get appTitle => isGerman ? "Dartify Store" : "Dartify Store";
+  // =================== Allgemein / Navigation ===================
+  static String get appTitle => isGerman ? "Dartify Store" : "Dartify Store"; // identisch in DE/EN
   static String get goodDay => isGerman ? "Schöner Tag zum Einkaufen" : "Good day for shopping";
   static String get searchInStore => isGerman ? "Im Store suchen" : "Search in Store";
   static String get yourFriends => isGerman ? "Deine Freunde" : "Your friends";
@@ -41,7 +47,7 @@ class AppStrings {
   static String get hdImageQuality => isGerman ? "HD-Bildqualität" : "HD Image Quality";
   static String get darkMode => isGerman ? "Dunkler Modus" : "Dark Mode";
   
-  // Profile Screen
+  // =================== Profil / Konto ===================
   static String get profile => isGerman ? "Profil" : "Profile";
   static String get changeProfilePicture => isGerman ? "Profilbild ändern" : "Change Profile Picture";
   static String get profileInformation => isGerman ? "Profil-Informationen" : "Profile Information";
@@ -57,7 +63,7 @@ class AppStrings {
   static String get female => isGerman ? "Weiblich" : "Female";
   static String get diverse => isGerman ? "Divers" : "Diverse";
   
-  // Settings subtitles
+  // =================== Settings-Untertexte ===================
   static String get setShoppingDeliveryAddress => isGerman ? "Lieferadresse für Einkäufe festlegen" : "Set shopping delivery address";
   static String get addRemoveProductsCheckout => isGerman ? "Produkte hinzufügen, entfernen und zur Kasse gehen" : "Add, remove products and move to checkout";
   static String get inProgressCompletedOrders => isGerman ? "Laufende und abgeschlossene Bestellungen" : "In-progress and Completed Orders";
@@ -73,12 +79,12 @@ class AppStrings {
   static String get useGermanLanguage => isGerman ? "Deutsche Sprache verwenden" : "Use German language";
   static String get noInformation => isGerman ? "Keine Information" : "No information";
   
-  // Home Screen
+  // =================== Home Screen ===================
   static String get hello => isGerman ? "Hallo" : "Hello";
   static String get friend => isGerman ? "Freund" : "Friend";
   static String get promoBanner => isGerman ? "Werbebanner" : "Promo Banner";
   
-  // Store Screen
+  // =================== Store Screen ===================
   static String get featuredBrands => isGerman ? "Beliebte Marken" : "Featured Brands";
   static String get viewAll => isGerman ? "Alle anzeigen" : "View All";
   static String get brand => isGerman ? "Marke" : "Brand";

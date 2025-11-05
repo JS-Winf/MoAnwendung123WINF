@@ -1,7 +1,7 @@
-import 'package:hotshop/features/authentication/controllers/onboarding/onboarding_controller.dart';
-import 'package:hotshop/utils/constants/sizes.dart';
-import 'package:hotshop/utils/device/device_utility.dart';
-import 'package:flutter/material.dart';
+import 'package:hotshop/features/authentication/controllers/onboarding/onboarding_controller.dart'; // Zugriff auf den Onboarding-Controller (zum Überspringen/Steuern der Seiten)
+import 'package:hotshop/utils/constants/sizes.dart'; // Konstanten für Abstände/Größen (z. B. defaultSpace)
+import 'package:hotshop/utils/device/device_utility.dart'; // Geräte-Utilities (z. B. AppBar-Höhe)
+import 'package:flutter/material.dart'; // Flutter UI Widgets
 
 class OnboardingSkip extends StatelessWidget {
   const OnboardingSkip({
@@ -11,8 +11,14 @@ class OnboardingSkip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        top: TDeviceUtils.getAppBarHeight(),
-        right: TSizes.defaultSpace,
-        child: TextButton(onPressed: () => OnboardingController.instance.skipPage(), child: const Text('Skip')));
+        // Positioniert den "Skip"-Button oben rechts am Bildschirmrand
+        top: TDeviceUtils.getAppBarHeight(), // Abstand nach unten entsprechend der AppBar-Höhe
+        right: TSizes.defaultSpace, // Standard-Seitenabstand
+        // TextButton, der die Onboarding-Sequenz überspringt
+        child: TextButton(
+            onPressed: () => OnboardingController.instance.skipPage(), // Skip-Logik aus Controller aufrufen
+            child: const Text('Skip') // Text für den Button
+        )
+    );
   }
 }
